@@ -1,0 +1,33 @@
+#mariaDB 실행
+# sudo service mariadb start
+
+#mariaDB 접속
+# mysql -u root -p
+
+#Database 확인
+# show databases;# create database DB명;
+
+#생성된 database 접속
+# use DB명;
+
+#user 계정 생성
+# create user '계정'@'접속위치' identified by '패스워드';
+
+ex) create user 'test'@'127.0.0.1' identified by 'Password'; -- 내부접속만 허용
+ex) create user 'test2'@'%' identified by 'Password'; -- 외부접속 허용
+
+#user 권한 주기
+# grant all privileges on DB이름.테이블 to '계정'@'접속위치';
+
+ex) grant all privileges on testDB.* to 'test2'@'%';
+
+#권한 적용
+# flush privileges;
+
+#권한 확인
+# show grants for '계정'@'접속위치';
+
+#계정, 권한 삭제
+# drop user '계정아이디'@'접속위치';
+
+# reboke all on DB이름.테이블 from '계정아이디'@'접속위치';
