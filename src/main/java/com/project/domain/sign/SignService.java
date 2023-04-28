@@ -1,4 +1,4 @@
-package com.project.domain.signup;
+package com.project.domain.sign;
 
 import com.project.domain.user.User;
 import com.project.domain.user.UserRepository;
@@ -6,11 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.annotation.Target;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class SignUpService {
+public class SignService {
 
     private final UserRepository userRepository;
 
@@ -30,8 +31,14 @@ public class SignUpService {
     }
 
     @Transactional
-    public boolean findUser(String loginId) {
-        Optional<User> findUser = userRepository.findByLoginId(loginId);
-        return findUser.isPresent();
+    public User findUser(String loginId) {
+        Optional<User> user = userRepository.findByLoginId(loginId);
+        return user.orElse(null);
+    }
+
+    @Transactional
+    public User findLoginUser(String loginId, String password) {
+        Optional<User> byLoginIdAndPassword = userRepository.findByLoginIdAndPassword(loginId, password);
+        return byLoginIdAndPassword.orElse(null);
     }
 }

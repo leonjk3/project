@@ -3332,3 +3332,4 @@ input, select, textarea {
 .signup-text-error{padding: 10px;color: red;font-weight: bold;}
 input[type="text"].error{border:1px solid red;}
 input[type="password"].error{border:1px solid red;}
+.error{padding: 10px;color: red;}

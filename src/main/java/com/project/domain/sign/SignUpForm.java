@@ -1,4 +1,4 @@
-package com.project.domain.signup;
+package com.project.domain.sign;
 
 import com.project.domain.user.SexType;
 import jakarta.persistence.EnumType;

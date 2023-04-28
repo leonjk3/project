@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/fragment/meta-fragment :: meta}"></head>
+<body class="is-preload">
+<div id="wrapper">
+    <header id="header" th:replace="~{/fragment/logoMenu-fragment :: logoMenu}"></header>
+    <nav id="menu" th:replace="~{/fragment/menu-fragment :: menu}"></nav>
+    <div id="main">
+        <div class="inner">
+            <h1 th:text="#{signIn}">로그인</h1>
+            <form method="post" th:action="@{/sign/signIn}" th:object="${signInForm}"> <!-- th:action을 입력하지않으면 현재 url(/add)로 method(POST)를 요청한다.-->
+                <div th:if="${#fields.hasGlobalErrors()}">
+                    <p class="error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">글로벌 오류 메시지</p>
+                </div>
+
+                <div class="row gtr-uniform">                        <!-- th:object는 빈 객체값이다. 각각의 field의 name, id 등을 넣어주기 위해, 그리고 Validation에서 튕겨나갔을시 기본 입력정보는 유지하기 위하여 사용.-->
+                    <!--로그인 아이디-->
+                    <div class="col-3">
+                        <label class="signup-label" for="loginId" th:text="#{signUp.form.loginId}"></label>
+                    </div>
+                    <div class="col-9"> <!-- th:errorclass를 입력하면 해당 필드에서 error가 발생했을시 입력한 class를 추가해준다. 나같은 경우에는 border를 주기위해 새로 추가하였다.-->
+                        <input class="signup-text" th:errorclass="error" type="text" th:field="*{loginId}" name="loginId" id="loginId" value="" th:placeholder="#{signUp.form.loginId.placeholder}" placeholder="로그인 아이디를 입력하세요" />
+                        <div class="signup-text-error" th:errors="*{loginId}"></div> <!-- th:errors를 사용하면 해당 필드에 에러가 있을시 bindingResult가 message를 해당 태그에 입력해준다!-->
+                    </div>
+
+                    <!--비밀번호-->
+                    <div class="col-3">
+                        <label class="signup-label" for="password" th:text="#{signUp.form.password}"></label>
+                    </div>
+                    <div class="col-9">
+                        <input class="signup-text" th:errorclass="error" type="password" th:fiend="*{password}" name="password" id="password" th:field=*{password} value="" th:placeholder="#{signUp.form.password.placeholder}" placeholder="비밀번호를 입력하세요" />
+                        <div class="signup-text-error" th:errors="*{password}"></div>
+                    </div>
+                </div>
+
+                <div style="width:50%;margin:0 auto;padding-top:50px;">
+                    <ul class="actions fit">
+                        <li><button type="submit" class="button fit" th:text="#{signIn}">로그인</button></li>
+                        <li><button type="button" th:onclick="|location.href='@{/sign/signUp}'|" class="button fit" th:text="#{signUp}">회원가입</button></li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    <footer id="footer" th:replace="~{/fragment/contactMe-fragment :: contactMe}"></footer>
+</div>
+<div th:replace="~{fragment/script-fragment :: script}"></div>
+</body>
+</html>

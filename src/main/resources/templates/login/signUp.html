@@ -9,7 +9,7 @@
         <div class="inner">
             <h1 th:text="#{signUp}">회원가입</h1>
 <!--            <span class="image main"><img src="images/pic13.jpg" alt="" /></span>-->
-            <form method="post" th:action th:object="${signUpForm}"> <!-- th:action을 입력하지않으면 현재 url(/add)로 method(POST)를 요청한다.-->
+            <form method="post" th:action="@{/sign/signUp}" th:object="${signUpForm}"> <!-- th:action을 입력하지않으면 현재 url(/add)로 method(POST)를 요청한다.-->
                 <div class="row gtr-uniform">                        <!-- th:object는 빈 객체값이다. 각각의 field의 name, id 등을 넣어주기 위해, 그리고 Validation에서 튕겨나갔을시 기본 입력정보는 유지하기 위하여 사용.-->
 
                     <!--로그인 아이디-->
