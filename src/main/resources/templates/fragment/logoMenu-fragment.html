@@ -6,8 +6,10 @@
             </a>
             <nav>
                 <ul>
-                    <li><a href="#" class="button">Sign Up</a></li>
-                    <li><a href="#" class="button">Sign In</a></li>
+                    <li>
+                        <a href="#" class="button" th:onclick="|location.href='@{/signUp}'|" th:text="#{signUp}" data-toggle="modal" data-target="#signUp">Sign Up</a>
+                    </li>
+                    <li><a href="#" class="button" th:text="#{signIn}">Sign In</a></li>
                     <li><a href="#menu">Menu</a></li>
                 </ul>
             </nav>

@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.checkerframework.common.aliasing.qual.Unique;
 
 @Entity
 @Getter
@@ -13,10 +14,14 @@ public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Unique
     private Long userId;
 
     @Column(nullable = false)
     private String loginId;
+
+    @Column(nullable = false)
+    private String userName;
 
     @Column(nullable = false)
     private String password;
@@ -31,12 +36,12 @@ public class User{
     private String address;
 
     @Column(nullable = false, columnDefinition = "CHAR(1)")
-    private String sex;
+    private SexType sex;
 
     @Builder
-    public User(Long userId, String loginId, String password, String email, String phone, String address, String sex) {
-        this.userId = userId;
+    public User(String loginId, String userName, String password, String email, String phone, String address, SexType sex) {
         this.loginId = loginId;
+        this.userName = userName;
         this.password = password;
         this.email = email;
         this.phone = phone;
