@@ -8,7 +8,7 @@
     <div id="main">
         <div class="inner">
             <h1 th:text="#{signIn}">로그인</h1>
-            <form method="post" th:action="@{/sign/signIn}" th:object="${signInForm}"> <!-- th:action을 입력하지않으면 현재 url(/add)로 method(POST)를 요청한다.-->
+            <form method="post" th:action th:object="${signInForm}"> <!-- th:action을 입력하지않으면 현재 url(/add)로 method(POST)를 요청한다.-->
                 <div th:if="${#fields.hasGlobalErrors()}">
                     <p class="error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">글로벌 오류 메시지</p>
                 </div>

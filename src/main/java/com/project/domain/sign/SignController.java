@@ -1,23 +1,18 @@
 package com.project.domain.sign;
 
-import com.project.domain.session.SessionConst;
+import com.project.web.session.SessionConst;
 import com.project.domain.user.SexType;
 import com.project.domain.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -68,12 +63,12 @@ public class SignController {
 
     //로그인 start
     @GetMapping("/signIn")
-    public String getSignIn(@ModelAttribute SignInForm signInForm){
+    public String getSignIn(@ModelAttribute SignInForm signInFormt){
         return "/login/signIn";
     }
 
     @PostMapping("/signIn")
-    public String addSignIn(@Validated @ModelAttribute SignInForm signInForm, BindingResult bindingResult, HttpServletRequest request) {
+    public String addSignIn(@Validated @ModelAttribute SignInForm signInForm, BindingResult bindingResult, @RequestParam(defaultValue = "/", name = "redirectURL") String redirectURL, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             return "/login/signIn";
         }
@@ -87,7 +82,7 @@ public class SignController {
             HttpSession httpSession = request.getSession();
             httpSession.setAttribute(SessionConst.SESSION_NAME, user);
         }
-        return "redirect:/";
+        return "redirect:" + redirectURL;
     }
     //로그인 end
 }
