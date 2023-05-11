@@ -1,0 +1,16 @@
+<header id="header" th:fragment="loginUser">
+    <div class="inner">
+        <a href="/" class="logo">
+            <span class="symbol"><img src="/images/logo.svg" alt="" /></span><span class="title" th:text="#{index.title}">금융권 데이터 서비스</span>
+        </a>
+        <nav>
+            <ul>
+                <li>
+                    <a href="#" class="button" th:onclick="|location.href='@{/sign/signUp}'|" th:text="#{signUp}" data-toggle="modal" data-target="#signUp">Sign Up</a>
+                </li>
+                <li><a href="#" class="button" th:onclick="|location.href='@{/sign/signOut}'|" th:text="#{signOut}">Sign Out</a></li>
+                <li><a href="#menu">Menu</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>

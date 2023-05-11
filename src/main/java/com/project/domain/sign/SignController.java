@@ -85,4 +85,18 @@ public class SignController {
         return "redirect:" + redirectURL;
     }
     //로그인 end
+
+    //로그아웃 start
+    @GetMapping("/signOut")
+    public String getSignOut(@Sign User user, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User loginUser = (User)session.getAttribute(SessionConst.SESSION_NAME);
+
+        if (loginUser != null) {
+            session.invalidate();
+            return "redirect:/";
+        }
+        return "/";
+    }
+    //로그아웃 end
 }

@@ -2,18 +2,28 @@ package com.project.config;
 
 import com.project.web.session.SessionFilter;
 import com.project.web.session.SessionInterceptor;
+import com.project.web.session.SignInArgumentResolver;
 import jakarta.servlet.Filter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new SignInArgumentResolver());
+    }
+
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
+
         registry.addInterceptor(new SessionInterceptor())
                 .order(0) //interceptor의 순서를 정한다.
                 .addPathPatterns("/**") // [/**]는 전부 Interceptor의 범위에 있다는 뜻이다.
