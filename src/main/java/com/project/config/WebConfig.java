@@ -27,7 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new SessionInterceptor())
                 .order(0) //interceptor의 순서를 정한다.
                 .addPathPatterns("/**") // [/**]는 전부 Interceptor의 범위에 있다는 뜻이다.
-                .excludePathPatterns("/", "/sign/**", "/assets/**", "/images/**"); //다음과 같은 url은 interceptor에서 제외한다.
+                .excludePathPatterns("/", "/sign/**", "/assets/**", "/images/**", "/error/**"); //다음과 같은 url은 interceptor에서 제외한다.
     }
 
 //    @Bean
