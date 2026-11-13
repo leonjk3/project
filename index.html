@@ -78,16 +78,27 @@ body.printing-wrong-note>main,body.printing-wrong-note>header,body.printing-wron
 .answerbar button.own-answer{outline:2px solid #405f92;outline-offset:2px}
 .reviewbox:empty{display:none}
 
+.result-summary{margin-bottom:18px}
+.result-summary>summary{cursor:pointer;font-weight:700;padding:9px 0;margin-bottom:10px}
+.result-summary:not([open])>summary{margin-bottom:0}
+
+.web-settings{max-width:1160px;margin:8px auto 0;padding:0 20px;font-size:12px}
+.web-settings>summary{cursor:pointer;width:max-content;padding:5px 0}
+header{justify-content:space-between}
+#web-sync-indicator{display:inline-block;color:#75847e;font-size:27px;line-height:1;width:30px;text-align:center;flex-shrink:0}
+#web-sync-indicator.sync-active{color:#cc2929;animation:web-sync-spin 1s linear infinite}
+@keyframes web-sync-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#web-sync-indicator.sync-active{animation-duration:3s}}
 .web-connection{max-width:1160px;margin:10px auto 0;padding:0 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px}
 .web-connection span{flex:1;min-width:190px}
 .web-connection button{padding:6px 10px;font-size:12px}
 #web-auth{max-width:480px;border:1px solid #c4d4ce;border-radius:12px;padding:24px}
 #web-auth input{width:100%;padding:12px;font:inherit}
 #web-auth p{font-size:14px;line-height:1.6}
-@media print{.web-connection{display:none}}
+@media print{.web-settings,#web-sync-indicator{display:none}}
 </style></head><body>
-<header><button type="button" id="home" class="brand" aria-label="시작 화면으로 이동" title="시작 화면"><span class="mark" aria-hidden="true">🏠</span><span id="home-label">국제무역사 <span class="muted">/</span> 기출 연습실</span></button></header>
-<section class="web-connection"><span id="web-status" role="status"></span><button type="button" id="web-connect">GitHub 연결</button><button type="button" id="web-sync">지금 동기화</button><button type="button" id="web-disconnect">연결 해제</button></section>
+<header><button type="button" id="home" class="brand" aria-label="시작 화면으로 이동" title="시작 화면"><span class="mark" aria-hidden="true">🏠</span><span id="home-label">국제무역사 <span class="muted">/</span> 기출 연습실</span></button><span id="web-sync-indicator" role="status" aria-label="GitHub 연결 대기" title="GitHub 연결 대기">↻</span></header>
+<details class="web-settings"><summary>GitHub 연결 설정</summary><section class="web-connection"><span id="web-status" role="status"></span><button type="button" id="web-connect">GitHub 연결</button><button type="button" id="web-sync">지금 동기화</button><button type="button" id="web-disconnect">연결 해제</button></section></details>
 <dialog id="web-auth"><form id="web-auth-form"><h2>GitHub 연결</h2><p>leonjk3/project · master<br>이 저장소의 Contents 읽기·쓰기 권한을 가진 토큰을 입력하세요.</p><input id="web-token" type="password" autocomplete="off" required aria-label="GitHub 토큰" placeholder="GitHub 토큰"><p>토큰은 이 탭의 세션에 보관됩니다. 특별문제와 시험기록은 저장소에 저장됩니다.</p><div class="row"><button class="primary">연결</button><button type="button" id="web-auth-close">닫기</button></div></form></dialog>
 <main id="app"><p>문제를 준비하고 있어요…</p></main><div id="toast" role="status"></div><input type="file" id="special-file" accept=".json,application/json" hidden><input type="file" id="history-file" accept=".json,application/json" hidden>
 <dialog id="confirm"><h2 id="dialogtitle"></h2><p id="dialogbody"></p><div class="actions"><button id="cancel">취소</button><button class="primary" id="accept">확인</button></div></dialog>
@@ -485,10 +496,10 @@ async function printWrongNote(session){
   }
 }
 const DESKTOP_REVIEW=true;
-let reviewSubjects=new Set(),reviewOwnAnswer=true,reviewCorrectAnswer=true;
+let reviewSubjects=new Set(),reviewOwnAnswer=true,reviewCorrectAnswer=true,resultSummaryExpanded=true;
 function reviewList(filter=reviewFilter){return state.ids.map(id=>byId.get(id)).filter(q=>!DESKTOP_REVIEW||reviewSubjects.has(q.subject)).filter(q=>filter==='wrong'?!q.answer.includes(state.answers[q.id]):filter==='flag'?state.flags[q.id]:true)}
-function showResults(){screen='result';updateHomeLabel();reviewFilter='all';reviewIndex=0;reviewSubjects=new Set(state.ids.map(id=>byId.get(id).subject));reviewOwnAnswer=true;reviewCorrectAnswer=true;renderResults();window.scrollTo(0,0)}
-function renderResults(){const practice=['mistakes','special','subjects'].includes(state.mode),g=grade(state),list=reviewList();reviewIndex=Math.min(reviewIndex,Math.max(0,list.length-1));const q=list[reviewIndex];app.innerHTML=`<div class="examtop"><div><div class="eyebrow">EXAM RESULTS</div><h2>${escapeHTML(state.title)} · 결과</h2></div></div><section class="resultbanner"><div><h2 style="margin-bottom:10px">${state.kind==='retake'?'재시험 결과':practice?(state.mode==='subjects'?'과목별 시험 결과':state.mode==='special'?'특별문제 연습 결과':'오답 연습 결과'):g.pass?'합격 기준을 달성했어요.':'다음 연습을 위한 기록이에요.'}</h2><p>${practice?'연습 완료':g.pass?'합격':'불합격'} · ${g.total} / ${g.n} 정답 · ${state.auto?'시간 종료 자동 제출':'직접 제출'}</p></div><div class="score">${g.average.toFixed(1)}<small>${practice?'% 정답률':' / 100점'}</small></div></section><div class="retake-actions"><button id="retake-all" class="primary small">전체 재시험 (${g.n}문항)</button><button id="retake-wrong" class="small" ${g.total===g.n?'disabled':''}>틀린 문제만 재시험 (${g.n-g.total}문항)</button><span class="muted">각 재시험은 새 기록으로 저장 · 틀린 문제에 미응답 포함</span></div><div class="scorecards">${SUBJECTS.map((s,i)=>g.totals[i]?`<section class="panel ${DESKTOP_REVIEW?'review-subject-card':''}" ${DESKTOP_REVIEW?`role="button" tabindex="0" data-review-subject="${i}" aria-pressed="${reviewSubjects.has(i)}" aria-label="${s} 문제 선택"`:''}><h3>${s} ${DESKTOP_REVIEW?`<span class="review-subject-state">${reviewSubjects.has(i)?'✓ 선택':'선택 안 함'}</span>`:''}</h3><strong class="${!practice&&g.counts[i]<12?'danger':''}">${(g.counts[i]/g.totals[i]*100).toFixed(1)}<span style="font-size:13px">${practice?'%':'점'}</span></strong><p class="muted">${g.counts[i]} / ${g.totals[i]} 정답${practice?'':' · '+(g.counts[i]<12?'과락':'과락 없음')}</p></section>`:'').join('')}</div><p class="note muted">${practice?(state.mode==='subjects'?'선택 과목만 응시 · 전체 시험의 합격·과락 판정 없이 정답률을 표시합니다.':'시간제한 없는 문제풀이 · 합격·과락 판정 없이 정답률을 표시합니다.'):'합격 기준: 각 과목 12문항 이상 정답 + 전체 72문항 이상 정답. 점수는 소수 첫째 자리까지 표시합니다.'}</p><div class="row"><h2 style="margin:0">문제 다시 보기</h2><button class="small" id="wrong-note-print" ${g.total===g.n?'disabled':''}>오답노트 생성하기</button><button class="small" id="export">결과 저장 (.json)</button></div>${DESKTOP_REVIEW?`<div class="review-answer-actions"><button type="button" class="small" id="review-own" aria-pressed="${reviewOwnAnswer}">내 답 ${reviewOwnAnswer?'숨기기':'보기'}</button><button type="button" class="small" id="review-correct" aria-pressed="${reviewCorrectAnswer}">정답 ${reviewCorrectAnswer?'숨기기':'보기'}</button></div>`:''}<div class="filters">${[['all',`전체 ${reviewList('all').length}`],['wrong',`오답·미응답 ${reviewList('wrong').length}`],['flag',`다시 보기 ${reviewList('flag').length}`]].map(([v,t])=>`<button data-filter="${v}" class="${reviewFilter===v?'active':''}">${t}</button>`).join('')}</div>${q?`<div class="qnav" style="margin:0 0 15px"><button id="rprev" ${reviewIndex===0?'disabled':''}>← 이전</button><span>${reviewIndex+1} / ${list.length}</span><button id="rnext" ${reviewIndex===list.length-1?'disabled':''}>다음 →</button></div>${questionHTML(q,true)}`:'<div class="panel empty">해당하는 문제가 없습니다.</div>'}`;if(DESKTOP_REVIEW){
+function showResults(){screen='result';updateHomeLabel();reviewFilter='all';reviewIndex=0;reviewSubjects=new Set(state.ids.map(id=>byId.get(id).subject));reviewOwnAnswer=true;reviewCorrectAnswer=true;resultSummaryExpanded=true;renderResults();window.scrollTo(0,0)}
+function renderResults(){const practice=['mistakes','special','subjects'].includes(state.mode),g=grade(state),list=reviewList();reviewIndex=Math.min(reviewIndex,Math.max(0,list.length-1));const q=list[reviewIndex];app.innerHTML=`<div class="examtop"><div><div class="eyebrow">EXAM RESULTS</div><h2>${escapeHTML(state.title)} · 결과</h2></div></div><details class="result-summary" id="result-summary" ${resultSummaryExpanded?'open':''}><summary>시험 결과 요약</summary><section class="resultbanner"><div><h2 style="margin-bottom:10px">${state.kind==='retake'?'재시험 결과':practice?(state.mode==='subjects'?'과목별 시험 결과':state.mode==='special'?'특별문제 연습 결과':'오답 연습 결과'):g.pass?'합격 기준을 달성했어요.':'다음 연습을 위한 기록이에요.'}</h2><p>${practice?'연습 완료':g.pass?'합격':'불합격'} · ${g.total} / ${g.n} 정답 · ${state.auto?'시간 종료 자동 제출':'직접 제출'}</p></div><div class="score">${g.average.toFixed(1)}<small>${practice?'% 정답률':' / 100점'}</small></div></section><div class="retake-actions"><button id="retake-all" class="primary small">전체 재시험 (${g.n}문항)</button><button id="retake-wrong" class="small" ${g.total===g.n?'disabled':''}>틀린 문제만 재시험 (${g.n-g.total}문항)</button><span class="muted">각 재시험은 새 기록으로 저장 · 틀린 문제에 미응답 포함</span></div><div class="scorecards">${SUBJECTS.map((s,i)=>g.totals[i]?`<section class="panel ${DESKTOP_REVIEW?'review-subject-card':''}" ${DESKTOP_REVIEW?`role="button" tabindex="0" data-review-subject="${i}" aria-pressed="${reviewSubjects.has(i)}" aria-label="${s} 문제 선택"`:''}><h3>${s} ${DESKTOP_REVIEW?`<span class="review-subject-state">${reviewSubjects.has(i)?'✓ 선택':'선택 안 함'}</span>`:''}</h3><strong class="${!practice&&g.counts[i]<12?'danger':''}">${(g.counts[i]/g.totals[i]*100).toFixed(1)}<span style="font-size:13px">${practice?'%':'점'}</span></strong><p class="muted">${g.counts[i]} / ${g.totals[i]} 정답${practice?'':' · '+(g.counts[i]<12?'과락':'과락 없음')}</p></section>`:'').join('')}</div><p class="note muted">${practice?(state.mode==='subjects'?'선택 과목만 응시 · 전체 시험의 합격·과락 판정 없이 정답률을 표시합니다.':'시간제한 없는 문제풀이 · 합격·과락 판정 없이 정답률을 표시합니다.'):'합격 기준: 각 과목 12문항 이상 정답 + 전체 72문항 이상 정답. 점수는 소수 첫째 자리까지 표시합니다.'}</p></details><div class="row"><h2 style="margin:0">문제 다시 보기</h2><button class="small" id="wrong-note-print" ${g.total===g.n?'disabled':''}>오답노트 생성하기</button><button class="small" id="export">결과 저장 (.json)</button></div>${DESKTOP_REVIEW?`<div class="review-answer-actions"><button type="button" class="small" id="review-own" aria-pressed="${reviewOwnAnswer}">내 답 ${reviewOwnAnswer?'숨기기':'보기'}</button><button type="button" class="small" id="review-correct" aria-pressed="${reviewCorrectAnswer}">정답 ${reviewCorrectAnswer?'숨기기':'보기'}</button></div>`:''}<div class="filters">${[['all',`전체 ${reviewList('all').length}`],['wrong',`오답·미응답 ${reviewList('wrong').length}`],['flag',`다시 보기 ${reviewList('flag').length}`]].map(([v,t])=>`<button data-filter="${v}" class="${reviewFilter===v?'active':''}">${t}</button>`).join('')}</div>${q?`<div class="qnav" style="margin:0 0 15px"><button id="rprev" ${reviewIndex===0?'disabled':''}>← 이전</button><span>${reviewIndex+1} / ${list.length}</span><button id="rnext" ${reviewIndex===list.length-1?'disabled':''}>다음 →</button></div>${questionHTML(q,true)}`:'<div class="panel empty">해당하는 문제가 없습니다.</div>'}`;$('result-summary').ontoggle=event=>{resultSummaryExpanded=event.currentTarget.open};if(DESKTOP_REVIEW){
  document.querySelectorAll('[data-review-subject]').forEach(card=>{
   const toggle=()=>{const subject=Number(card.dataset.reviewSubject);if(reviewSubjects.has(subject))reviewSubjects.delete(subject);else reviewSubjects.add(subject);reviewIndex=0;renderResults()};
   card.onclick=toggle;
@@ -549,6 +560,10 @@ function webMergeRecords(remote,local){
 }
 function webSetStatus(message){
   $('web-status').textContent=message;
+  const indicator=$('web-sync-indicator');
+  indicator.classList.toggle('sync-active',webBusy);
+  indicator.setAttribute('aria-label',message);
+  indicator.title=message;
 }
 function webSchedule(delay=1200){
   if(webApplying)return;
@@ -661,6 +676,7 @@ async function webSync(){
     webSetStatus(error.message||'연결 실패 · 변경사항은 브라우저에 보관 중');
   }finally{
     webBusy=false;
+    $('web-sync-indicator').classList.remove('sync-active');
     if(webAgain){webAgain=false;webSchedule()}
   }
 }
