@@ -85,10 +85,10 @@ body.printing-wrong-note>main,body.printing-wrong-note>header,body.printing-wron
 .web-settings{max-width:1160px;margin:8px auto 0;padding:0 20px;font-size:12px}
 .web-settings>summary{cursor:pointer;width:max-content;padding:5px 0}
 header{justify-content:space-between}
-#web-sync-indicator{display:inline-block;color:#75847e;font-size:27px;line-height:1;width:30px;text-align:center;flex-shrink:0}
-#web-sync-indicator.sync-active{color:#cc2929;animation:web-sync-spin 1s linear infinite}
+#web-sync-indicator{display:inline-block;color:#75847e;font-size:27px;line-height:1;width:30px;text-align:center;flex-shrink:0;animation:web-sync-spin 1s linear infinite}
+#web-sync-indicator.sync-active{color:#cc2929}
 @keyframes web-sync-spin{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){#web-sync-indicator.sync-active{animation-duration:3s}}
+@media(prefers-reduced-motion:reduce){#web-sync-indicator{animation-duration:3s}}
 .web-connection{max-width:1160px;margin:10px auto 0;padding:0 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px}
 .web-connection span{flex:1;min-width:190px}
 .web-connection button{padding:6px 10px;font-size:12px}
