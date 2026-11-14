@@ -85,12 +85,13 @@ body.printing-wrong-note>main,body.printing-wrong-note>header,body.printing-wron
 .web-settings{max-width:1160px;margin:8px auto 0;padding:0 20px;font-size:12px}
 .web-settings>summary{cursor:pointer;width:max-content;padding:5px 0}
 header{justify-content:space-between}
-#web-sync-indicator{display:inline-block;color:#cc2929;width:7px;height:7px;background:currentColor;border-radius:50%;flex-shrink:0;margin:0 6px;animation:web-sync-pulse 1.6s ease-in-out infinite}
+#web-sync-indicator{display:inline-block;color:#d79b19;width:8px;height:8px;background:currentColor;border-radius:50%;flex-shrink:0;margin:0 6px;box-shadow:0 0 5px currentColor;animation:web-led-blink 1.4s steps(1,end) infinite}
+#web-sync-indicator.sync-connected{color:#268575}
+#web-sync-indicator.sync-active{animation:web-led-rainbow .6s steps(1,end) infinite}
+@keyframes web-led-blink{0%,55%{opacity:1}56%,100%{opacity:.08}}
+@keyframes web-led-rainbow{0%{color:#ed4245;opacity:1}8%{opacity:.08}16%{color:#f28c28;opacity:1}24%{opacity:.08}32%{color:#e0bc22;opacity:1}40%{opacity:.08}48%{color:#30b56c;opacity:1}56%{opacity:.08}64%{color:#398ae5;opacity:1}72%{opacity:.08}80%{color:#8958df;opacity:1}88%{opacity:.08}96%{color:#df54a7;opacity:1}}
 #resume{background:#fff0c5;border-color:#d9ac55;color:#81500d;font-weight:700}
 #resume:hover{background:#ffe5a0;border-color:#bb872a}
-#web-sync-indicator.sync-active{color:#268575;animation:none;opacity:1}
-@keyframes web-sync-pulse{0%,100%{opacity:.45}50%{opacity:1}}
-@media(prefers-reduced-motion:reduce){#web-sync-indicator{animation:none;opacity:1}}
 .web-connection{max-width:1160px;margin:10px auto 0;padding:0 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px}
 .web-connection span{flex:1;min-width:190px}
 .web-connection button{padding:6px 10px;font-size:12px}
@@ -809,6 +810,7 @@ function webSetStatus(message){
   $('web-status').textContent=message;
   const indicator=$('web-sync-indicator');
   indicator.classList.toggle('sync-active',webBusy);
+  indicator.classList.toggle('sync-connected',!!webToken);
   indicator.setAttribute('aria-label',message);
   indicator.title=message;
 }
