@@ -85,12 +85,12 @@ body.printing-wrong-note>main,body.printing-wrong-note>header,body.printing-wron
 .web-settings{max-width:1160px;margin:8px auto 0;padding:0 20px;font-size:12px}
 .web-settings>summary{cursor:pointer;width:max-content;padding:5px 0}
 header{justify-content:space-between}
-#web-sync-indicator{display:inline-block;box-sizing:border-box;color:#75847e;width:22px;height:22px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;flex-shrink:0;transform-origin:50% 50%;animation:web-sync-spin 1s linear infinite}
+#web-sync-indicator{display:inline-block;color:#75847e;width:7px;height:7px;background:currentColor;border-radius:50%;flex-shrink:0;margin:0 6px;opacity:.55}
 #resume{background:#fff0c5;border-color:#d9ac55;color:#81500d;font-weight:700}
 #resume:hover{background:#ffe5a0;border-color:#bb872a}
-#web-sync-indicator.sync-active{color:#cc2929}
-@keyframes web-sync-spin{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){#web-sync-indicator{animation-duration:3s}}
+#web-sync-indicator.sync-active{color:#268575;animation:web-sync-pulse 1.6s ease-in-out infinite}
+@keyframes web-sync-pulse{0%,100%{opacity:.45}50%{opacity:1}}
+@media(prefers-reduced-motion:reduce){#web-sync-indicator.sync-active{animation:none;opacity:1}}
 .web-connection{max-width:1160px;margin:10px auto 0;padding:0 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px}
 .web-connection span{flex:1;min-width:190px}
 .web-connection button{padding:6px 10px;font-size:12px}
