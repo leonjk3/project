@@ -465,7 +465,7 @@ function historyGroupOf(session){
   if(title.startsWith('무작위'))return {key:'random',label:'무작위 시험'};
   const match=title.match(/^제(\d+)회/),rounds=new Set(session.ids.map(id=>byId.get(id).round));
   const round=match?Number(match[1]):rounds.size===1?[...rounds][0]:null;
-  return round?{key:'round-'+round,label:'제'+round+'회'}:{key:'other',label:'기타 시험'};
+  return round?{key:'round-'+round,label:'제'+round+'회',round}:{key:'other',label:'기타 시험'};
 }
 function groupedHistoryHTML(){
   if(!history.length)return '<p class="muted" style="font-size:13px;margin:14px 0 0">저장된 시험 기록이 없습니다.</p>';
@@ -475,7 +475,7 @@ function groupedHistoryHTML(){
     if(!groups.has(group.key))groups.set(group.key,{...group,entries:[]});
     groups.get(group.key).entries.push({session,index});
   });
-  const ordered=[...groups.values()].sort((a,b)=>Math.max(...b.entries.map(e=>e.session.finished))-Math.max(...a.entries.map(e=>e.session.finished)));
+  const ordered=[...groups.values()].sort((a,b)=>(a.round??Infinity)-(b.round??Infinity)||a.label.localeCompare(b.label,'ko'));
   if(!historyGroupsInitialized){historyOpenGroups.add(ordered[0].key);historyGroupsInitialized=true}
   return ordered.map(group=>{
     const entries=group.entries.sort((a,b)=>a.session.finished-b.session.finished);
