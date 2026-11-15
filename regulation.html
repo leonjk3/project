@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>무역규범 암기카드</title>
+<style>
+:root{font-family:system-ui,-apple-system,'Malgun Gothic',sans-serif;color:#1c3038;background:#f4f6f6;font-size:16px;color-scheme:light}
+*{box-sizing:border-box}body{margin:0}main{max-width:1020px;margin:auto;padding:24px}button,input,select{font:inherit}button,select{cursor:pointer}button{border:1px solid #b9c8cd;border-radius:8px;padding:10px 15px;background:white;color:inherit;min-height:44px}button:hover{background:#eaf2f1}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #77a9ba;outline-offset:2px}.primary{background:#175d57;color:#fff;border-color:#175d57}.primary:hover{background:#104a45}header,.row,.actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}header{justify-content:space-between;margin-bottom:20px}h1{font-size:24px;margin:0}h2{font-size:18px;margin:0 0 14px}p{line-height:1.6}.muted,small{color:#52656c}fieldset{border:0;padding:0;margin:14px 0;display:flex;gap:12px;flex-wrap:wrap}legend{font-weight:700;margin-bottom:10px}fieldset label{padding:10px;background:#edf2f3;border-radius:8px}input[type=checkbox]{width:18px;height:18px;vertical-align:middle;accent-color:#175d57}.panel{border:1px solid #d0dbde;border-radius:12px;padding:22px;background:#fff;margin:16px 0}.settings{display:grid;grid-template-columns:1fr 1fr;gap:18px}.settings select{display:block;width:100%;padding:10px;margin-top:8px;border:1px solid #b9c8cd;border-radius:6px;background:#fff}.study-card{width:100%;min-height:320px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;text-align:center;padding:30px;overflow-wrap:anywhere;border:1px solid #c9d6d9;border-radius:12px;background:#fff;cursor:pointer}.study-card .front{font-size:clamp(28px,4.5vw,46px);font-weight:700;line-height:1.3}.study-card .back{font-size:clamp(21px,3vw,29px);color:#245d58;line-height:1.6}.study-card small{font-size:14px}.study-card[aria-pressed=true]{background:#fafffd}.study-actions{display:grid;grid-template-columns:1fr 2fr 1fr;gap:12px;margin-top:14px}.study-actions .marked{background:#fff3d4;border-color:#b29244}.progress{height:5px;background:#dce6e5;margin:14px 0;border-radius:9px;overflow:hidden}.progress div{height:100%;background:#175d57}#notice{min-height:24px;color:#815214}#search{flex:1;min-width:180px;padding:11px;border:1px solid #b9c8cd;border-radius:8px}.table-wrap{overflow:auto;max-height:60vh}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:12px 8px;border-bottom:1px solid #dbe3e6;vertical-align:top}th{position:sticky;top:0;background:#edf2f3}td select{padding:6px;border-radius:6px}td button{padding:6px 10px}summary{cursor:pointer;font-weight:700}details p{font-size:14px}.empty{text-align:center;padding:30px;color:#52656c}.source{font-size:13px;margin-top:14px}.done{font-size:23px;line-height:1.6;text-align:center;padding:40px 12px}
+@media(max-width:620px){main{padding:14px}.panel{padding:16px}.settings{grid-template-columns:1fr}.study-card{min-height:290px;padding:22px 15px}.study-actions{gap:6px}.study-actions button{padding:10px 6px}td,th{font-size:14px}header{margin-bottom:12px}}
+
+html{-webkit-text-size-adjust:100%}
+body{font-size:16px}
+main{max-width:640px;padding:16px max(14px,env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+header{margin-bottom:10px}h1{font-size:22px}header #total{font-size:13px}
+#notice:empty{display:none}#notice{margin:8px 0;min-height:0;font-size:14px}
+.panel{padding:16px;margin:12px 0}
+.settings{grid-template-columns:1fr;gap:14px}
+fieldset{gap:7px}fieldset label{flex:1;padding:10px 6px;white-space:nowrap;font-size:14px;text-align:center}
+.settings select{min-height:46px}
+#start{width:100%;font-size:18px;min-height:52px}
+#home .table-wrap{max-height:54dvh;overflow:auto}
+#words,#words tr,#words td{display:block}
+table,tbody{display:block;width:100%}
+thead{display:none}
+#words tr{position:relative;padding:14px 0;border-bottom:1px solid #dbe3e6;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#words td{padding:0;border:0}
+#words td:first-child{grid-column:1/-1;font-size:18px;font-weight:700;overflow-wrap:anywhere}
+#words td:nth-child(2){grid-column:1/-1;font-size:16px;line-height:1.5}
+#words td select,#words td button{width:100%;min-height:42px;background:#fff}
+#study{display:flex;flex-direction:column;gap:10px;min-height:0;flex:1}
+#study[hidden]{display:none}
+body.studying{height:100vh;height:100dvh;overflow:hidden;overscroll-behavior:none}
+body.studying main{height:100%;display:flex;flex-direction:column;padding-top:calc(10px + env(safe-area-inset-top))}
+body.studying header{flex-shrink:0;margin-bottom:12px}
+body.studying #notice{flex-shrink:0}
+#study>.row{flex-shrink:0}
+#study .progress{margin:0;flex-shrink:0}
+#study .study-card{flex:1;min-height:0;overflow-y:auto;padding:24px 18px;gap:22px;touch-action:pan-y pinch-zoom;-webkit-tap-highlight-color:transparent;background:#fff}
+#study .front{font-size:clamp(28px,8vw,40px)}
+#study .back{font-size:clamp(22px,6vw,29px)}
+#study-source{margin:0}
+.study-actions{grid-template-columns:1fr 1.8fr 1fr;gap:8px;margin:0;flex-shrink:0}
+.study-actions button{min-height:50px;padding:10px 5px;font-size:15px}
+#study .key-hint{margin:0;font-size:12px;text-align:center;flex-shrink:0}
+@media(max-height:550px){#study .study-card{padding:12px;gap:10px}#study .front{font-size:25px}#study .back{font-size:21px}body.studying header{display:none}.study-actions button{min-height:42px}#study{gap:6px}}
+
+fieldset label{flex:0 1 calc(50% - 7px);text-align:left;white-space:normal}
+#study .front{font-size:clamp(23px,6.3vw,32px);line-height:1.5}
+#study .back{font-size:clamp(18px,4.8vw,23px);line-height:1.65;white-space:pre-line}
+#study .study-card{justify-content:flex-start;padding-top:28px}
+#study .study-card small{margin-top:auto}
+#study-source{font-size:12px;line-height:1.5}
+#words td:nth-child(2){white-space:pre-line}
+@media(max-height:550px){#study .front{font-size:21px}#study .back{font-size:17px}#study .study-card{padding-top:12px}}
+body.studying .web-return{display:none}</style></head><body><main>
+<nav class="web-return" aria-label="기출 연습실"><a href="index.html" style="color:#175d57;font-size:13px;text-decoration:none;display:inline-block;padding:6px 0;margin-bottom:8px">← 기출문제</a></nav><header><h1>무역규범 암기카드</h1><span class="muted" id="total"></span></header><p id="notice" role="status" aria-live="polite"></p>
+<section id="home">
+<div class="panel"><h2>공부할 분야 선택</h2><fieldset id="levels"><legend>분야</legend></fieldset><div class="settings"><label>학습 대상<select id="scope"><option value="all">선택 분야 전체</option><option value="marked">복습 체크한 카드만</option></select></label><label>문제 방향<select id="direction"><option value="en">질문 → 답</option><option value="ko">답 → 질문</option></select></label></div><div class="row" style="margin:18px 0"><label><input id="shuffle" type="checkbox" checked> 순서 섞기</label><span id="selection" class="muted"></span></div><button id="start" class="primary">공부하기</button></div>
+<div class="panel"><div class="row"><h2 style="margin:0">카드 목록</h2><input id="search" type="search" placeholder="질문·답 검색" aria-label="질문·답 검색"></div><p id="list-count" class="muted"></p><div class="table-wrap"><table><thead><tr><th>질문</th><th>답</th><th>분야</th><th>복습</th></tr></thead><tbody id="words"></tbody></table></div></div>
+<details class="panel"><summary>저장·백업과 참고 기준</summary><p>사용자가 정리한 대외무역법·관세법의 기간과 금액을 50개 질문으로 나눴습니다. 숫자뿐 아니라 기산점과 적용 조건을 함께 답해 보세요. 중요 예외는 카드 뒷면에 적었습니다.</p><p>원산지 판정의 60일, 위약물품의 1년, 불복절차 등은 요약 표현을 구체화했습니다. 금액 기준은 자가사용·통관 방식·품목 등의 조건에 따라 적용됩니다.</p><p>복습 체크는 이 브라우저에 저장됩니다. 파일을 옮길 때는 학습 기록을 저장해 가져오세요. 규정 확인 기준은 2026년 11월 13일입니다.</p><p><a href="https://www.law.go.kr/법령/관세법">관세법</a> · <a href="https://www.law.go.kr/법령/관세법시행령">관세법 시행령</a> · <a href="https://www.law.go.kr/법령/관세법시행규칙">관세법 시행규칙</a> · <a href="https://www.law.go.kr/법령/대외무역법시행령">대외무역법 시행령</a> · <a href="https://www.law.go.kr/행정규칙/대외무역관리규정">대외무역관리규정</a> · <a href="https://www.law.go.kr/행정규칙/전략물자수출입고시">전략물자 수출입고시</a></p><div class="actions"><button id="backup">학습 기록 저장</button><button id="restore">학습 기록 불러오기</button></div><input id="backup-file" type="file" accept=".json,application/json" hidden></details>
+</section>
+<section id="study" hidden><div class="row" style="justify-content:space-between"><button id="go-home">시작화면</button><span id="counter"></span></div><div class="progress"><div id="bar"></div></div><button id="card" class="study-card" aria-pressed="false"><span class="front"></span><span class="back" hidden></span><small>카드를 터치하면 답이 나와요</small></button><div id="study-source" class="muted source"></div><div class="study-actions"><button id="prev">← 이전</button><button id="mark">☆ 복습 체크</button><button id="next">다음 →</button></div><p class="muted source key-hint">왼쪽 밀기 다음 · 오른쪽 밀기 이전 · 카드 터치 답 보기</p></section>
+</main><script id="vocab" type="application/json">[{"id":"regulation-1","en":"무역업고유번호는 신청 후 언제 발급되는가?","ko":"신청 즉시 발급.\n상호·대표자·주소 등 변경사항은 변동일부터 20일 이내 통보 또는 수정입력.","level":1,"source":"대외무역관리규정 제24조"},{"id":"regulation-2","en":"일반 수출입승인의 기본 유효기간은?","ko":"원칙 1년.\n물품 특성 등에 따라 단축하거나 20년 범위에서 1년을 초과해 정할 수 있다.","level":1,"source":"대외무역법 시행령 제18조"},{"id":"regulation-3","en":"외화획득 이행기간의 기본 숫자 두 개는?","ko":"직접 이행 2년 / 국내 공급·양도 1년.\n직접 이행은 수입통관일 또는 공급일 등 해당 거래의 기산점으로 계산한다.","level":1,"source":"대외무역법 시행령 제27조·대외무역관리규정 제39조"},{"id":"regulation-4","en":"전략물자 전문판정 처리·유효·서류 보관은?","ko":"처리 15일 / 판정 유효 2년 / 서류 보관 5년.\n별도 심사에 따른 처리 연장과 통제기준 변경에 따른 조기 만료 등 예외가 있다.","level":1,"source":"전략물자 수출입고시"},{"id":"regulation-5","en":"전략물자 개별 수출허가의 기본 유효기간은?","ko":"원칙 1년.\n판정 유효기간 2년과 구분한다. 포괄허가·기술 등 유형별 특례를 확인한다.","level":1,"source":"전략물자 수출입고시"},{"id":"regulation-6","en":"원산지 판정을 요청받은 뒤 판정·결과 통지는 언제까지?","ko":"원칙적으로 요청받은 날부터 60일 이내.\n판정 후 다시 60일을 주는 구조로 계산하지 않는다. 자료수집 등에 필요한 기간은 제외한다.","level":1,"source":"대외무역법 시행령 제62조"},{"id":"regulation-7","en":"원산지 판정 불복의 이의제기와 결정 통지 기한은?","ko":"이의제기 30일 / 결정 통지 150일.\n판정 통보를 받은 날부터 30일 안에 이의제기하고, 이의를 받은 날부터 150일 안에 결정을 알린다.","level":1,"source":"대외무역법 제34조"},{"id":"regulation-8","en":"수입수량 제한의 기준수량은 어떻게 잡는가?","ko":"최근의 대표적인 3년간 연평균 수입량 이상이 원칙.\n최초 조치보다 완화하는 방향과 관계 규정의 예외를 함께 확인한다.","level":1,"source":"대외무역법 시행령 제68조"},{"id":"regulation-9","en":"수입수량 제한의 최초 기간과 연장 포함 한도는?","ko":"최초 최대 4년 / 합산 최대 8년.\n종전 적용기간·연장기간 및 관련 긴급관세 기간의 합산 기준을 확인한다.","level":1,"source":"대외무역법 시행령 제68조"},{"id":"regulation-10","en":"수입·지식재산권 관련 거래서류의 보관기간은?","ko":"해당 신고 수리일부터 5년.\n수입신고필증, 수입거래·가격 자료, 지식재산권 거래 관련 계약서 등.","level":2,"source":"관세법 시행령 제3조"},{"id":"regulation-11","en":"수출·반송 관련 서류의 보관기간은?","ko":"해당 신고 수리일부터 3년.","level":2,"source":"관세법 시행령 제3조"},{"id":"regulation-12","en":"보세·적재화물목록 관련 서류의 보관기간은?","ko":"해당 신고 수리일부터 2년.\n보세화물 반출입·보세운송·적재화물목록 자료.","level":2,"source":"관세법 시행령 제3조"},{"id":"regulation-13","en":"관세의 과세환율은 어느 기간의 어떤 환율을 쓰는가?","ko":"법정 기준일이 속하는 주의 전주 평균.\n기준환율 또는 재정환율을 평균하여 관세청장이 정한다.","level":2,"source":"관세법 제18조"},{"id":"regulation-14","en":"HS 품목분류의 법적 기준 세 가지는?","ko":"통칙 / 주 / 호·소호의 용어.\n부·류·절의 표제는 참조용이다. 호는 4자리, 소호는 6자리.","level":2,"source":"관세율표 해석에 관한 통칙 제1호·제6호"},{"id":"regulation-15","en":"품목분류 사전심사·재심사의 숫자 세 개는?","ko":"사전심사 처리 30일 / 재심사 신청 30일 / 재심사 처리 60일.\n신청 접수일·결과 통지일을 구분하고 분석·보정 등 제외기간을 확인한다.","level":2,"source":"관세법 제86조·시행령 제106조"},{"id":"regulation-16","en":"잠정가격 신고 후 확정가격은 언제 신고하는가?","ko":"2년 범위에서 세관장이 지정한 기간 내.\n모든 건의 기한이 자동으로 2년이 되는 것은 아니다. 불가피한 사유가 있으면 연장 규정이 있다.","level":2,"source":"관세법 시행령 제16조"},{"id":"regulation-17","en":"납부 전 신고세액을 고치는 절차는?","ko":"정정신고.\n납부 후 부족세액의 보정·수정과 구분한다.","level":3,"source":"납세업무 처리에 관한 고시"},{"id":"regulation-18","en":"부족세액 보정신청은 언제부터 얼마 동안 가능한가?","ko":"신고납부한 날부터 6개월 이내.","level":3,"source":"관세법 제38조의2"},{"id":"regulation-19","en":"보정신청한 부족세액은 언제까지 납부하는가?","ko":"보정신청한 날의 다음 날까지.","level":3,"source":"관세법 제38조의2"},{"id":"regulation-20","en":"부족세액 수정신고는 언제 하는가?","ko":"보정기간이 지난 뒤부터 경정 통지를 받기 전까지.\n단순히 6개월 이후라면 언제나 가능한 것으로 외우지 않는다.","level":3,"source":"관세법 제38조의3"},{"id":"regulation-21","en":"일반 경정청구는 언제부터 몇 년 이내인가?","ko":"최초 납세신고를 한 날부터 5년 이내.\n납부세액이 과다한 경우의 일반 청구기간.","level":3,"source":"관세법 제38조의3"},{"id":"regulation-22","en":"경정청구를 받은 세관장의 처리·통지 기한은?","ko":"청구를 받은 날부터 2개월 이내.","level":3,"source":"관세법 제38조의3"},{"id":"regulation-23","en":"후발적 경정청구의 기한은?","ko":"법정 후발 사유가 발생한 것을 안 날부터 2개월 이내.\n일반 경정청구 5년과 기산점을 구분한다.","level":3,"source":"관세법 제38조의3"},{"id":"regulation-24","en":"일반 신고납부의 관세 납부기한은?","ko":"납세신고 수리일부터 15일 이내.","level":3,"source":"관세법 제9조"},{"id":"regulation-25","en":"재해 등 법정 사유에 따른 관세 납부기한 연장 한도는?","ko":"최대 1년.\n법정 사유와 세관장의 인정이 필요하다.","level":3,"source":"관세법 제10조"},{"id":"regulation-26","en":"수입신고 전 즉시반출 후 수입신고 기한은?","ko":"즉시반출신고를 한 날부터 10일 이내.","level":3,"source":"관세법 제253조"},{"id":"regulation-27","en":"즉시반출 물품의 관세 납부기한은?","ko":"수입신고일부터 15일 이내.\n일반 신고납부의 ‘수리일’과 구분한다.","level":3,"source":"관세법 제9조"},{"id":"regulation-28","en":"관세청장이 정한 보세구역의 수리 물품은 언제까지 반출하는가?","ko":"수입신고 수리일부터 15일 이내.\n법에서 정한 적용 보세구역·물품의 반출 규정이다.","level":3,"source":"관세법 제157조의2"},{"id":"regulation-29","en":"수리 전 반출승인 물품의 적용 법령 기준 시점은?","ko":"수입신고 수리 전 반출을 승인한 때.\n적용 법령의 기준 시점에 관한 특례로, 모든 기한에서 수리일을 대체한다고 일반화하지 않는다.","level":3,"source":"관세법 제17조"},{"id":"regulation-30","en":"관세 부과 제척기간의 기본 숫자 세 개는?","ko":"일반 5년 / 무신고 수입 7년 / 부정 포탈·환급·감면 10년.\n관세를 부과할 수 있는 날부터 계산한다.","level":4,"source":"관세법 제21조"},{"id":"regulation-31","en":"관세 징수권의 소멸시효는 금액별로 얼마인가?","ko":"5억원 이상 10년 / 5억원 미만 5년.\n징수권을 행사할 수 있는 날부터 계산한다.","level":4,"source":"관세법 제22조"},{"id":"regulation-32","en":"분할납부기간 중 관세 징수권 소멸시효는?","ko":"시효 진행이 정지된다.\n독촉·압류 등에 따른 시효 중단과 구분한다.","level":4,"source":"관세법 제23조"},{"id":"regulation-33","en":"관세 이의신청의 신청·결정 기한은?","ko":"신청 90일 / 결정 원칙 30일.\n신청은 처분을 안 날 또는 통지받은 날부터, 결정은 접수일부터. 법정 증거자료 제출 시 결정 60일.","level":4,"source":"관세법 제121조·제132조"},{"id":"regulation-34","en":"심사·심판청구와 관세 행정소송의 대표 기한은?","ko":"각 90일.\n직접 불복은 처분 인지·통지일부터, 이의신청 후 청구는 결정 통지일부터, 소송은 심사·심판 결정 통지일부터가 원칙.","level":4,"source":"관세법 제120조·제121조·제131조"},{"id":"regulation-35","en":"과세전적부심사 청구·결정 기한은?","ko":"청구 30일 / 결정 30일.\n청구는 과세전통지를 받은 날부터, 결정은 청구 접수일부터.","level":4,"source":"관세법 제118조"},{"id":"regulation-36","en":"관세조사의 사전통지·종료 후 결과 통지 기한은?","ko":"원칙적으로 조사 시작 20일 전 / 조사 종료 후 20일 이내.\n사전통지 생략이나 재조사 등 법정 예외를 확인한다.","level":4,"source":"관세법 제114조·제115조"},{"id":"regulation-37","en":"상업용 견본품의 금액 관련 대표 면세 기준은?","ko":"과세가격 미화 250달러 이하의 물품 중 견본품으로 인정되는 것.\n무상이라는 사실만으로 자동 면세되는 것은 아니다.","level":5,"source":"관세법 제94조·시행규칙 제45조"},{"id":"regulation-38","en":"해외직구 자가사용 물품의 대표 소액 기준은?","ko":"물품가격 미화 150달러 이하.\n자가사용·품목 요건을 확인한다. 목록통관과 소액면세의 적용 요건도 구분한다.","level":5,"source":"관세법 제94조·특송물품 수입통관 사무처리에 관한 고시"},{"id":"regulation-39","en":"미국발 특송물품의 목록통관 금액 특례는?","ko":"물품가격 미화 200달러 이하.\n미국발 목록통관 대상에 관한 특례다. 목록통관 배제 품목 등 일반 수입신고 건에 일률 적용하지 않는다.","level":5,"source":"특송물품 수입통관 사무처리에 관한 고시"},{"id":"regulation-40","en":"여행자 휴대품의 기본 면세범위는?","ko":"1인당 미화 800달러.\n면세점 구매와 해외 취득품 등을 합산하는 반입 기준이며 술·담배·향수는 별도 기준이 있다.","level":5,"source":"관세법 시행규칙 제48조"},{"id":"regulation-41","en":"재수입면세의 기본 기간·기산점은?","ko":"수출신고 수리일부터 2년 내 재수입.\n해외 제조·가공·수리·사용 여부와 종전 감면·환급 등 요건을 함께 확인하며 사용물품의 법정 예외도 있다.","level":5,"source":"관세법 제99조"},{"id":"regulation-42","en":"재수출면세의 기본 기간은?","ko":"수입신고 수리일부터 1년 범위에서 세관장이 정하는 기간.\n대상물품·연장·장기 사용 특례는 별도로 확인한다.","level":5,"source":"관세법 제97조"},{"id":"regulation-43","en":"재수출 감면의 기본 기간은?","ko":"수입신고 수리일부터 2년 이내 재수출.\n장기 사용 대상의 사전승인 등 법정 요건을 갖춘 특례는 4년 범위다.","level":5,"source":"관세법 제98조"},{"id":"regulation-44","en":"과오납 등 관세환급금의 결정·지급은 언제 하는가?","ko":"지체 없이 환급금으로 결정하고 30일 이내 환급.\n모든 환급제도의 신청기간을 뜻하는 숫자는 아니다.","level":6,"source":"관세법 제46조"},{"id":"regulation-45","en":"계약 내용과 다른 위약물품 환급의 1년은 어떤 기한인가?","ko":"수입신고 수리일부터 1년 내 보세구역 등 법정 장소 반입.\n계약과 다르고 성질·형태가 유지된 물품을 반입 후 재수출하는 대표 경로다. 승인 폐기 등은 별도.","level":6,"source":"관세법 제106조"},{"id":"regulation-46","en":"자가사용 수입물품 반품 환급의 기간은?","ko":"수입신고 수리일부터 6개월.\n보세구역 반입·재수출 또는 세관장 확인 등 법정 경로의 요건을 함께 충족해야 한다.","level":6,"source":"관세법 제106조의2"},{"id":"regulation-47","en":"환급특례법상 수출용 원재료 수출이행기간은?","ko":"수출 등에 제공된 날의 말일부터 소급 2년.\n해당 기간 안에 수입된 원재료 등을 대상으로 보는 기준이다.","level":6,"source":"관세환급특례법 제9조·시행령 제9조"},{"id":"regulation-48","en":"환급특례법상 관세 환급신청 기한은?","ko":"물품이 수출 등에 제공된 날부터 5년 이내.\n수출이행기간 2년과 구분한다.","level":6,"source":"관세환급특례법 제14조"},{"id":"regulation-49","en":"기초원재료납세증명서와 수입세액분할증명서의 차이는?","ko":"기납증은 수입원재료를 제조·가공한 물품의 원재료 납부세액을 증명.\n분증은 수입물품을 제조·가공하지 않고 거래·분할할 때 해당 수입세액을 증명.","level":6,"source":"수출용 원재료에 대한 관세 등 환급사무처리에 관한 고시"},{"id":"regulation-50","en":"FTA 협정관세 사후적용 신청의 기본 기한은?","ko":"수입신고 수리일부터 1년 이내.\n수입신고일과 구분하고 법정 사유에 따른 별도 신청 특례를 확인한다.","level":6,"source":"FTA 관세특례법 제9조"}]</script><script>
+'use strict';
+const WORDS=JSON.parse(document.getElementById('vocab').textContent);
+document.getElementById('vocab').remove();
+const GROUPS=["승인·판정", "서류·품목분류", "신고·납부·정정", "소멸·불복·조사", "면세·감면", "환급·FTA"];
+const byId=new Map(WORDS.map(word=>[word.id,word]));
+const $=id=>document.getElementById(id);
+const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const KEY='trade-regulation-cards-v1';
+let progress={levels:{},marked:[]},session=[],index=0,flipped=false,studying=false;
+function validProgress(data){
+ return data&&typeof data==='object'&&data.levels&&typeof data.levels==='object'&&!Array.isArray(data.levels)&&Object.entries(data.levels).every(([id,level])=>byId.has(id)&&GROUPS.map((_,index)=>index+1).includes(level))&&Array.isArray(data.marked)&&data.marked.every(id=>byId.has(id));
+}
+try{const stored=JSON.parse(localStorage.getItem(KEY));if(validProgress(stored))progress={levels:stored.levels,marked:[...new Set(stored.marked)]}}catch(error){$('notice').textContent='저장된 기록을 읽을 수 없습니다. 현재 창에서는 학습할 수 있습니다.'}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(progress))}catch(error){$('notice').textContent='브라우저 저장을 사용할 수 없습니다. 학습 기록 저장 버튼으로 백업하세요.'}}
+function levelOf(word){return word.level}
+function selectedLevels(){return [...document.querySelectorAll('[data-level]:checked')].map(input=>Number(input.dataset.level))}
+function selectedWords(){
+ const levels=selectedLevels();
+ return WORDS.filter(word=>levels.includes(levelOf(word))&&($('scope').value!=='marked'||progress.marked.includes(word.id)));
+}
+function refresh(){
+ const selected=selectedLevels();
+ $('levels').innerHTML='<legend>분야</legend>'+GROUPS.map((_,index)=>index+1).map(level=>'<label><input type="checkbox" data-level="'+level+'" '+(selected.includes(level)?'checked':'')+'> '+GROUPS[level-1]+' · '+WORDS.filter(word=>levelOf(word)===level).length+'개</label>').join('');
+ const words=selectedWords();
+ $('total').textContent=WORDS.length+'개 · 복습 체크 '+progress.marked.length+'개';
+ $('selection').textContent=words.length+'개 학습';
+ $('start').disabled=words.length===0;
+ const query=$('search').value.trim().toLocaleLowerCase();
+ const list=words.filter(word=>(word.en+' '+word.ko).toLocaleLowerCase().includes(query));
+ $('list-count').textContent=list.length+'개';
+ $('words').innerHTML=list.map(word=>'<tr><td>'+escapeHTML(word.en)+'</td><td>'+escapeHTML(word.ko)+'</td><td>'+escapeHTML(GROUPS[levelOf(word)-1])+'</td><td><button data-mark="'+word.id+'" aria-pressed="'+progress.marked.includes(word.id)+'">'+(progress.marked.includes(word.id)?'★ 해제':'☆ 체크')+'</button></td></tr>').join('');
+}
+function toggleMark(id){
+ progress.marked=progress.marked.includes(id)?progress.marked.filter(value=>value!==id):[...progress.marked,id];
+ save();
+ if(studying)updateMark();
+ else refresh();
+}
+function updateMark(){
+ const marked=progress.marked.includes(session[index]);
+ $('mark').textContent=marked?'★ 복습 해제':'☆ 복습 체크';
+ $('mark').classList.toggle('marked',marked);
+ $('mark').setAttribute('aria-pressed',String(marked));
+}
+function showCard(){
+ const word=byId.get(session[index]);
+ flipped=false;
+ $('card').scrollTop=0;
+ $('card').querySelector('.front').textContent=$('direction').value==='en'?word.en:word.ko;
+ $('card').querySelector('.back').textContent=$('direction').value==='en'?word.ko:word.en;
+ $('card').querySelector('.back').hidden=true;
+ $('card').setAttribute('aria-pressed','false');
+ $('counter').textContent=(index+1)+' / '+session.length;
+ $('bar').style.width=((index+1)/session.length*100)+'%';
+ $('study-source').textContent=GROUPS[word.level-1]+' · '+word.source;
+ $('prev').disabled=index===0;
+ $('next').textContent=index===session.length-1?'완료':'다음 →';
+ updateMark();
+}
+function start(){
+ session=selectedWords().map(word=>word.id);
+ if(!session.length)return;
+ if($('shuffle').checked){for(let i=session.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[session[i],session[j]]=[session[j],session[i]]}}
+ index=0;studying=true;document.body.classList.add('studying');$('home').hidden=true;$('study').hidden=false;showCard();window.scrollTo(0,0);
+}
+function home(){
+ studying=false;document.body.classList.remove('studying');$('home').hidden=false;$('study').hidden=true;refresh();window.scrollTo(0,0);
+}
+$('levels').innerHTML=GROUPS.map((_,index)=>index+1).map(level=>'<input type="checkbox" checked data-level="'+level+'">').join('');
+$('levels').onchange=refresh;$('scope').onchange=refresh;$('search').oninput=refresh;$('start').onclick=start;$('go-home').onclick=home;
+$('words').onclick=event=>{const id=event.target.closest('[data-mark]')?.dataset.mark;if(byId.has(id))toggleMark(id)};
+$('card').onclick=()=>{
+ flipped=!flipped;$('card').querySelector('.back').hidden=!flipped;$('card').setAttribute('aria-pressed',String(flipped));
+};
+$('mark').onclick=()=>toggleMark(session[index]);
+$('prev').onclick=()=>{if(index>0){index--;showCard()}};
+$('next').onclick=()=>{if(index<session.length-1){index++;showCard()}else{home();$('notice').textContent=session.length+'개 학습 완료'}};
+let swipe=null,suppressClickUntil=0;
+$('card').addEventListener('touchstart',event=>{
+ swipe=null;
+ if(!studying||event.touches.length!==1)return;
+ const touch=event.touches[0];
+ if(touch.clientX<22||touch.clientX>window.innerWidth-22)return;
+ swipe={id:touch.identifier,x:touch.clientX,y:touch.clientY,at:Date.now()};
+},{passive:true});
+$('card').addEventListener('touchmove',event=>{
+ if(!swipe)return;
+ if(event.touches.length!==1){swipe=null;return}
+ const touch=event.touches[0];
+ if(Math.abs(touch.clientY-swipe.y)>25&&Math.abs(touch.clientY-swipe.y)>Math.abs(touch.clientX-swipe.x))swipe=null;
+},{passive:true});
+$('card').addEventListener('touchcancel',()=>{swipe=null},{passive:true});
+$('card').addEventListener('touchend',event=>{
+ const start=swipe;swipe=null;
+ if(!start||!studying||event.touches.length||Date.now()-start.at>800)return;
+ const touch=Array.from(event.changedTouches).find(touch=>touch.identifier===start.id);
+ if(!touch)return;
+ const dx=touch.clientX-start.x,dy=touch.clientY-start.y;
+ if(Math.abs(dx)<55||Math.abs(dx)<Math.abs(dy)*1.5)return;
+ suppressClickUntil=Date.now()+450;
+ $(dx<0?'next':'prev').click();
+},{passive:true});
+$('card').addEventListener('click',event=>{
+ if(Date.now()<suppressClickUntil){event.preventDefault();event.stopImmediatePropagation()}
+},true);
+document.addEventListener('keydown',event=>{
+ if(!studying||event.ctrlKey||event.altKey||event.metaKey||event.repeat||['INPUT','TEXTAREA','SELECT'].includes(event.target.tagName))return;
+ if(event.code==='Space'){event.preventDefault();$('card').click()}
+ else if(event.key==='ArrowLeft'){event.preventDefault();$('prev').click()}
+ else if(event.key==='ArrowRight'){event.preventDefault();$('next').click()}
+ else if(event.key.toLowerCase()==='s'){event.preventDefault();$('mark').click()}
+});
+$('backup').onclick=()=>{
+ const data={app:'trade-regulation-cards',version:1,progress};
+ const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+ const link=document.createElement('a');link.href=url;link.download='무역규범 암기카드_학습기록.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+$('restore').onclick=()=>$('backup-file').click();
+$('backup-file').onchange=async event=>{
+ const file=event.target.files[0];event.target.value='';if(!file)return;
+ try{
+  if(file.size>500000)throw new Error();
+  const data=JSON.parse((await file.text()).replace(/^﻿/,''));
+  if(data.app!=='trade-regulation-cards'||data.version!==1||!validProgress(data.progress))throw new Error();
+  progress={levels:{...data.progress.levels},marked:[...new Set(data.progress.marked)]};save();refresh();$('notice').textContent='학습 기록을 불러왔습니다.';
+ }catch(error){$('notice').textContent='올바른 무역규범 암기카드 학습 기록 파일을 선택하세요.'}
+};
+refresh();
+</script></body></html>
