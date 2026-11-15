@@ -85,10 +85,9 @@ body.printing-wrong-note>main,body.printing-wrong-note>header,body.printing-wron
 .web-settings{max-width:1160px;margin:8px auto 0;padding:0 20px;font-size:12px}
 .web-settings>summary{cursor:pointer;width:max-content;padding:5px 0}
 header{justify-content:space-between}
-#web-sync-indicator{display:inline-block;color:#d79b19;width:8px;height:8px;background:currentColor;border-radius:50%;flex-shrink:0;margin:0 6px;box-shadow:0 0 5px currentColor;animation:web-led-blink 1.4s steps(1,end) infinite}
+#web-sync-indicator{display:inline-block;color:#d79b19;width:8px;height:8px;background:currentColor;border-radius:50%;flex-shrink:0;margin:0 6px;box-shadow:0 0 5px currentColor}
 #web-sync-indicator.sync-connected{color:#268575}
-#web-sync-indicator.sync-active{color:#268575;animation:none;opacity:1}
-@keyframes web-led-blink{0%,55%{opacity:1}56%,100%{opacity:.08}}
+#web-sync-indicator.sync-active{color:#268575}
 #resume{background:#fff0c5;border-color:#d9ac55;color:#81500d;font-weight:700}
 #resume:hover{background:#ffe5a0;border-color:#bb872a}
 .regulation-cards-link{margin-left:auto;font-size:12px;color:#176858;text-decoration:none;white-space:nowrap;padding:5px 8px;border:1px solid #cfddd7;border-radius:6px}.regulation-cards-link:hover{background:#e7f0eb}
@@ -492,7 +491,7 @@ document.addEventListener('toggle',event=>{
   else historyOpenGroups.delete(group.dataset.historyGroup);
 },true);
 
-function home(){const cumulativeCount=cumulativeWrongChoices().size;screen='home';updateHomeLabel();const year=EXAMS.find(e=>e[0]===selectedRound)[1];app.innerHTML=`
+function home(){const cumulativeCount=twoChoicePools().reduce((total,pool)=>total+Math.min(30,pool.length),0);screen='home';updateHomeLabel();const year=EXAMS.find(e=>e[0]===selectedRound)[1];app.innerHTML=`
 
 <div class="homegrid"><div class="home-left"><section class="panel"><div class="row"><h2>회차별 시험</h2><a class="regulation-cards-link" href="regulation.html">규범 암기카드</a>${saved&&!saved.finished?`<button id="resume" class="small" title="${escapeHTML(saved.title)}">이어 풀기 (${Object.keys(saved.answers).length}/${saved.ids.length})</button>`:""}</div><div class="exam-options"><label for="exam-year">연도<select id="exam-year">${YEARS.map(y=>`<option value="${y}" ${y===year?'selected':''}>${y}년</option>`).join('')}</select></label><label for="exam-round">회차<select id="exam-round">${roundOptions(year)}</select></label><label for="duration">시험 시간<select id="duration"><option value="120">과목당 30분 · 실전</option><option value="0">제한 없음 · 연습</option></select></label><button class="primary" id="start">시험시작</button></div><fieldset class="subject-choice" aria-label="회차별 시험 과목"><label><input type="checkbox" id="subject-all" ${selectedSubjects.length===4?'checked':''}>전체</label>${SUBJECTS.map((name,i)=>`<label><input type="checkbox" data-subject="${i}" ${selectedSubjects.includes(i)?'checked':''}>${name}</label>`).join('')}</fieldset></section>
 <section class="panel history"><div class="row history-heading"><div><h2 style="margin:0">시험 기록</h2></div><div class="history-actions"><button id="frequent" class="small">자주 틀린 문제 보기 (${Object.values(mistakeStats.counts).filter(c=>c[1]>=2).length})</button><button id="cumulative-two-choice" class="small" ${cumulativeCount?'':'disabled'}>누적 오답 2지선다 (${cumulativeCount})</button><button id="history-import" class="small">기록 불러오기 (.json)</button><button id="clear-history" class="small danger" ${history.length?'':'disabled'}>기록 전체 삭제</button></div></div><div class="history-list" tabindex="0" aria-label="시험 기록 목록">${groupedHistoryHTML()}</div></section></div>
@@ -743,8 +742,13 @@ function validTwoChoices(session){
     return q&&Array.isArray(pair)&&pair.length===2&&pair.every(n=>[1,2,3,4].includes(n))&&pair[0]!==pair[1]&&pair.filter(n=>q.answer.includes(n)).length===1&&(!session.answers[id]||pair.includes(session.answers[id]));
   });
 }
+function twoChoicePools(wrong=cumulativeWrongChoices()){
+  const pools=SUBJECTS.map(()=>[]);
+  for(const id of wrong.keys())pools[byId.get(id).subject].push(id);
+  return pools;
+}
 function startTwoChoice(){
-  const wrong=cumulativeWrongChoices(),ids=[...wrong.keys()].sort((a,b)=>{
+  const wrong=cumulativeWrongChoices(),ids=twoChoicePools(wrong).flatMap(pool=>pool.length>30?shuffle(pool).slice(0,30):pool).sort((a,b)=>{
     const qa=byId.get(a),qb=byId.get(b);
     return qa.subject-qb.subject||qa.round-qb.round||qa.number-qb.number;
   });
