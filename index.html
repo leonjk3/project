@@ -225,12 +225,12 @@ header{justify-content:space-between}
 }
 
 @media screen and (min-width:761px){
- .homegrid{align-items:stretch}
+ .homegrid{align-items:stretch;min-height:min(600px,calc(100dvh - 140px))}
  .home-left{display:flex;flex-direction:column}
  .home-left>.history{flex:1;display:flex;flex-direction:column;min-height:0}
  .home-left>.history .history-list{contain:size;flex:1;min-height:90px;max-height:none;overflow:auto}
  .homegrid>aside{display:flex;flex-direction:column}
- .homegrid>aside>.special-panel{flex:1}
+ .homegrid>aside>.panel{flex:1 1 auto}
 }
 
 /* Subject selection tiles retain native checkbox keyboard and screen-reader support. */
