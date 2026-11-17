@@ -698,6 +698,16 @@ async function questionImage(question,{includeHeading=true,forPrint=false}={}){
   }finally{URL.revokeObjectURL(url)}
 }
 
+document.addEventListener('keydown',event=>{
+  if(event.code!=='KeyC'||!(event.ctrlKey||event.metaKey)||event.altKey||event.shiftKey||event.repeat||document.querySelector('dialog[open]'))return;
+  const target=event.target;
+  if(target.isContentEditable||['INPUT','SELECT','TEXTAREA'].includes(target.tagName)||!window.getSelection()?.isCollapsed)return;
+  const button=app.querySelector('.question [data-copy-question]');
+  if(!button||button.disabled)return;
+  event.preventDefault();
+  button.click();
+});
+
 document.addEventListener('click',async event=>{
   const button=event.target.closest('[data-copy-question]');
   if(!button||button.disabled)return;
