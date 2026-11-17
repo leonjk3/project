@@ -730,19 +730,31 @@ document.addEventListener('click',async event=>{
 function confidenceHTML(q,session,review){
   const value=session.confidence?.[q.id];
   if(review)return value?`<span class="confidence-result">${value==='sure'?'확실':'헷갈림'}로 표시한 문제</span>`:'';
-  return `<div class="confidence-actions" role="group" aria-label="확신도"><span>확신도</span>${[['sure','확실'],['unsure','헷갈림']].map(([v,label])=>`<button type="button" class="small" data-confidence="${v}" aria-pressed="${value===v}">${label}</button>`).join('')}</div>`;
+  return `<div class="confidence-actions" role="group" aria-label="확신도"><span>확신도</span>${[['sure','확실','C'],['unsure','헷갈림','V']].map(([v,label,key])=>`<button type="button" class="small" data-confidence="${v}" aria-pressed="${value===v}" aria-keyshortcuts="${key}" title="${label} (${key})">${label}</button>`).join('')}</div>`;
 }
-document.addEventListener('click',event=>{
-  const button=event.target.closest('[data-confidence]');
-  if(!button||screen!=='exam'||!state||state.finished)return;
+function setConfidence(value){
+  if(screen!=='exam'||!state||state.finished)return;
   resumeTimerOnActivity();
   if(state.deadline&&Date.now()>=state.deadline){finish(true);return}
-  const id=state.ids[state.index],value=button.dataset.confidence;
+  const id=state.ids[state.index];
   state.confidence||={};
   if(state.confidence[id]===value)delete state.confidence[id];
   else state.confidence[id]=value;
   save();
   app.querySelectorAll('[data-confidence]').forEach(b=>b.setAttribute('aria-pressed',String(state.confidence[id]===b.dataset.confidence)));
+}
+
+document.addEventListener('click',event=>{
+  const button=event.target.closest('[data-confidence]');
+  if(button)setConfidence(button.dataset.confidence);
+});
+
+document.addEventListener('keydown',event=>{
+  if(screen!=='exam'||event.repeat||event.ctrlKey||event.altKey||event.metaKey||event.shiftKey||document.querySelector('dialog[open]'))return;
+  const target=event.target;
+  if(target.isContentEditable||['INPUT','SELECT','TEXTAREA'].includes(target.tagName))return;
+  const value=event.code==='KeyC'?'sure':event.code==='KeyV'?'unsure':null;
+  if(value){event.preventDefault();setConfidence(value)}
 });
 
 /* Store only the two original option numbers, never duplicate question data. */
@@ -1189,5 +1201,5 @@ function webBoot(){
 const webOriginalTick=tick;
 tick=function(){if(screen!=='exam')return;if(webToken&&!webInitialSynced){if(state)updateClock();return}webOriginalTick()};
 
-document.addEventListener('keydown',e=>{if(screen!=='exam'||document.querySelector('dialog[open]')||['INPUT','SELECT','TEXTAREA','BUTTON'].includes(document.activeElement.tagName)||e.ctrlKey||e.altKey||e.metaKey)return;if(/^[1-4]$/.test(e.key)){e.preventDefault();choose(+e.key)}else if(e.key==='ArrowRight'){e.preventDefault();jump(state.index+1)}else if(e.key==='ArrowLeft'){e.preventDefault();jump(state.index-1)}else if(e.key.toLowerCase()==='f'){$('flag').click()}});setInterval(tick,500);home();webBoot();
+document.addEventListener('keydown',e=>{if(screen!=='exam'||document.querySelector('dialog[open]')||(document.activeElement.isContentEditable||['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName))||e.ctrlKey||e.altKey||e.metaKey)return;if(/^[1-4]$/.test(e.key)){e.preventDefault();choose(+e.key)}else if(e.key==='ArrowRight'){e.preventDefault();jump(state.index+1)}else if(e.key==='ArrowLeft'){e.preventDefault();jump(state.index-1)}else if(e.key.toLowerCase()==='f'){$('flag').click()}});setInterval(tick,500);home();webBoot();
 </script></body></html>
