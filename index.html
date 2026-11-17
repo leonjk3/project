@@ -94,6 +94,7 @@ header{justify-content:space-between}
 .web-connection{max-width:1160px;margin:10px auto 0;padding:0 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px}
 .web-connection span{flex:1;min-width:190px}
 .web-connection button{padding:6px 10px;font-size:12px}
+#web-resume{max-width:500px;max-height:85dvh;overflow:auto;padding:18px}.web-resume-list{display:grid;gap:8px;margin-top:14px}.web-resume-list button{text-align:left;padding:12px}.web-resume-list span{display:block;color:var(--muted);font-size:12px;margin-top:5px}
 #web-auth{max-width:480px;border:1px solid #c4d4ce;border-radius:12px;padding:24px}
 #web-auth input{width:100%;padding:12px;font:inherit}
 #web-auth p{font-size:14px;line-height:1.6}
@@ -297,6 +298,7 @@ body.exam-active main{padding-bottom:max(8px,env(safe-area-inset-bottom))}
 </style></head><body>
 <header><button type="button" id="home" class="brand" aria-label="시작 화면으로 이동" title="시작 화면"><span class="mark" aria-hidden="true">🏠</span><span id="home-label">국제무역사 <span class="muted">/</span> 기출 연습실</span></button><span id="web-sync-indicator" role="status" aria-label="GitHub 연결 대기" title="GitHub 연결 대기"></span></header>
 <details class="web-settings"><summary>GitHub 연결 설정</summary><section class="web-connection"><span id="web-status" role="status"></span><button type="button" id="web-connect">GitHub 연결</button><button type="button" id="web-sync">지금 동기화</button><button type="button" id="web-disconnect">연결 해제</button></section></details>
+<dialog id="web-resume"><div class="row"><h2>진행 중인 시험</h2><button id="web-resume-close" class="small">닫기</button></div><div class="web-resume-list"></div></dialog>
 <dialog id="web-auth"><form id="web-auth-form"><h2>GitHub 연결</h2><p>leonjk3/project · master<br>이 저장소의 Contents 읽기·쓰기 권한을 가진 토큰을 입력하세요.</p><input id="web-token" type="password" autocomplete="off" required aria-label="GitHub 토큰" placeholder="GitHub 토큰"><p>토큰은 이 탭의 세션에 보관됩니다. 특별문제와 시험기록은 저장소에 저장됩니다.</p><div class="row"><button class="primary">연결</button><button type="button" id="web-auth-close">닫기</button></div></form></dialog>
 <main id="app"><p>문제를 준비하고 있어요…</p></main><div id="toast" role="status"></div><input type="file" id="special-file" accept=".json,application/json" hidden><input type="file" id="history-file" accept=".json,application/json" hidden>
 <dialog id="confirm"><h2 id="dialogtitle"></h2><p id="dialogbody"></p><div class="actions"><button id="cancel">취소</button><button class="primary" id="accept">확인</button></div></dialog>
@@ -493,7 +495,7 @@ document.addEventListener('toggle',event=>{
 
 function home(){const cumulativeCount=twoChoicePools().reduce((total,pool)=>total+Math.min(30,pool.length),0);screen='home';updateHomeLabel();const year=EXAMS.find(e=>e[0]===selectedRound)[1];app.innerHTML=`
 
-<div class="homegrid"><div class="home-left"><section class="panel"><div class="row"><h2>회차별 시험</h2><a class="regulation-cards-link" href="regulation.html">규범 암기카드</a>${saved&&!saved.finished?`<button id="resume" class="small" title="${escapeHTML(saved.title)}">이어 풀기 (${Object.keys(saved.answers).length}/${saved.ids.length})</button>`:""}</div><div class="exam-options"><label for="exam-year">연도<select id="exam-year">${YEARS.map(y=>`<option value="${y}" ${y===year?'selected':''}>${y}년</option>`).join('')}</select></label><label for="exam-round">회차<select id="exam-round">${roundOptions(year)}</select></label><label for="duration">시험 시간<select id="duration"><option value="120">과목당 30분 · 실전</option><option value="0">제한 없음 · 연습</option></select></label><button class="primary" id="start">시험시작</button></div><fieldset class="subject-choice" aria-label="회차별 시험 과목"><label><input type="checkbox" id="subject-all" ${selectedSubjects.length===4?'checked':''}>전체</label>${SUBJECTS.map((name,i)=>`<label><input type="checkbox" data-subject="${i}" ${selectedSubjects.includes(i)?'checked':''}>${name}</label>`).join('')}</fieldset></section>
+<div class="homegrid"><div class="home-left"><section class="panel"><div class="row"><h2>회차별 시험</h2><a class="regulation-cards-link" href="regulation.html">규범 암기카드</a>${saved&&!saved.finished?`<button id="resume" class="small" title="${escapeHTML(saved.title)}">${webResumeLabel()}</button>`:""}</div><div class="exam-options"><label for="exam-year">연도<select id="exam-year">${YEARS.map(y=>`<option value="${y}" ${y===year?'selected':''}>${y}년</option>`).join('')}</select></label><label for="exam-round">회차<select id="exam-round">${roundOptions(year)}</select></label><label for="duration">시험 시간<select id="duration"><option value="120">과목당 30분 · 실전</option><option value="0">제한 없음 · 연습</option></select></label><button class="primary" id="start">시험시작</button></div><fieldset class="subject-choice" aria-label="회차별 시험 과목"><label><input type="checkbox" id="subject-all" ${selectedSubjects.length===4?'checked':''}>전체</label>${SUBJECTS.map((name,i)=>`<label><input type="checkbox" data-subject="${i}" ${selectedSubjects.includes(i)?'checked':''}>${name}</label>`).join('')}</fieldset></section>
 <section class="panel history"><div class="row history-heading"><div><h2 style="margin:0">시험 기록</h2></div><div class="history-actions"><button id="frequent" class="small">자주 틀린 문제 보기 (${Object.values(mistakeStats.counts).filter(c=>c[1]>=2).length})</button><button id="cumulative-two-choice" class="small" ${cumulativeCount?'':'disabled'}>누적 오답 2지선다 (${cumulativeCount})</button><button id="history-import" class="small">기록 불러오기 (.json)</button><button id="clear-history" class="small danger" ${history.length?'':'disabled'}>기록 전체 삭제</button></div></div><div class="history-list" tabindex="0" aria-label="시험 기록 목록">${groupedHistoryHTML()}</div></section></div>
 <aside><section class="panel random"><h2>무작위 시험</h2><fieldset class="subject-choice random-choice" aria-label="무작위 시험 과목"><label><input type="checkbox" id="random-all" ${randomSubjects.length===4?'checked':''}>전체</label>${SUBJECTS.map((name,i)=>`<label><input type="checkbox" data-random-subject="${i}" ${randomSubjects.includes(i)?'checked':''}>${name}</label>`).join('')}</fieldset><button class="primary" id="random">시험시작</button></section><section class="panel special-panel" style="margin-top:14px"><h2>특별문제</h2><fieldset class="subject-choice" id="special-subjects" aria-label="특별문제 과목"><label><input type="checkbox" id="special-all">전체</label>${SUBJECTS.map((name,i)=>`<label><input type="checkbox" data-special-subject="${i}">${name}</label>`).join('')}</fieldset><button id="special-start" class="primary full" ${specialIds.length?'':'disabled'}>시험시작</button><div class="special-file-actions"><button id="special-export" class="small">저장하기 (.json)</button><button id="special-import" class="small">불러오기 (.json)</button></div></section></aside></div>
 ${!storageOK?'<p class="storagewarning">이 브라우저에서는 자동 저장을 사용할 수 없습니다. 창을 닫으면 진행 기록이 사라질 수 있습니다.</p>':''}`;
@@ -508,7 +510,7 @@ $('exam-year').onchange=e=>{selectedRound=EXAMS.find(x=>x[1]===+e.target.value)[
     else specialSubjects.delete(subject);
   }
   syncSpecialSubjects();
-};syncSpecialSubjects();$('cumulative-two-choice').onclick=startTwoChoice;$('history-import').onclick=()=>{$('history-file').click()};document.querySelectorAll('[data-export-history]').forEach(b=>b.onclick=()=>exportHistoryEntry(history[+b.dataset.exportHistory]));$('special-start').onclick=startSpecialPractice;$('special-export').onclick=exportSpecial;$('special-import').onclick=()=>{$('special-file').value='';$('special-file').click()};$('start').onclick=()=>start(selectedRound);$('frequent').onclick=()=>{frequentMin=2;frequentSubject=-1;frequentIndex=0;showFrequent();window.scrollTo(0,0)};$('random-all').onchange=e=>{document.querySelectorAll('[data-random-subject]').forEach(el=>el.checked=e.target.checked);syncRandomSubjects()};document.querySelectorAll('[data-random-subject]').forEach(el=>el.onchange=syncRandomSubjects);syncRandomSubjects();$('random').onclick=()=>start(null);if($('resume'))$('resume').onclick=resumeExam;$('clear-history').onclick=()=>deleteHistory();document.querySelectorAll('[data-delete-history]').forEach(b=>b.onclick=()=>deleteHistory(+b.dataset.deleteHistory));document.querySelectorAll('[data-history]').forEach(b=>b.onclick=()=>{state=history[+b.dataset.history];showResults()})}
+};syncSpecialSubjects();$('cumulative-two-choice').onclick=startTwoChoice;$('history-import').onclick=()=>{$('history-file').click()};document.querySelectorAll('[data-export-history]').forEach(b=>b.onclick=()=>exportHistoryEntry(history[+b.dataset.exportHistory]));$('special-start').onclick=startSpecialPractice;$('special-export').onclick=exportSpecial;$('special-import').onclick=()=>{$('special-file').value='';$('special-file').click()};$('start').onclick=()=>start(selectedRound);$('frequent').onclick=()=>{frequentMin=2;frequentSubject=-1;frequentIndex=0;showFrequent();window.scrollTo(0,0)};$('random-all').onchange=e=>{document.querySelectorAll('[data-random-subject]').forEach(el=>el.checked=e.target.checked);syncRandomSubjects()};document.querySelectorAll('[data-random-subject]').forEach(el=>el.onchange=syncRandomSubjects);syncRandomSubjects();$('random').onclick=()=>start(null);if($('resume'))$('resume').onclick=webResumeExam;$('clear-history').onclick=()=>deleteHistory();document.querySelectorAll('[data-delete-history]').forEach(b=>b.onclick=()=>deleteHistory(+b.dataset.deleteHistory));document.querySelectorAll('[data-history]').forEach(b=>b.onclick=()=>{state=history[+b.dataset.history];showResults()})}
 function exportHistoryEntry(session){
   const report={app:'trade-exam-history',version:1,session};
   const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
@@ -907,18 +909,23 @@ const webRecordsEndpoint='https://api.github.com/repos/leonjk3/project/contents/
 let webToken='';
 try{webToken=sessionStorage.getItem(WEB_TOKEN_KEY)||''}catch(error){}
 const webOriginalWrite=write;
-let webApplying=false,webBusy=false,webTimer=null,webAgain=false;
+let webApplying=false,webBusy=false,webTimer=null,webAgain=false,webInitialSynced=false;
 let webHistorySnapshot=[...history];
 let webLocal=read(WEB_RECORDS_KEY,{records:{},current:null});
 // Retire withdrawn content without invalidating unrelated saved attempts.
 function webRetireRemovedSessions(data){
   const retire=event=>event?.value&&Array.isArray(event.value.ids)&&event.value.ids.some(id=>typeof id==='string'&&id.startsWith('mock67-'))?{...event,value:null}:event;
   if(!data||!data.records||typeof data.records!=='object'||Array.isArray(data.records))return data;
-  return {...data,records:Object.fromEntries(Object.entries(data.records).map(([key,event])=>[key,retire(event)])),current:retire(data.current)};
+  return {...data,records:Object.fromEntries(Object.entries(data.records).map(([key,event])=>[key,retire(event)])),current:retire(data.current),...(data.progress?{progress:Object.fromEntries(Object.entries(data.progress).map(([key,event])=>[key,retire(event)]))}:{})};
 }
 webLocal=webRetireRemovedSessions(webLocal);
 function webEvent(value){
-  return {value,at:Date.now(),operation:crypto.randomUUID()};
+  return {value:structuredClone(value),at:Date.now(),operation:crypto.randomUUID()};
+}
+function webAttemptId(session){
+  let hash=2166136261;
+  for(const char of session.ids.join('|'))hash=Math.imul(hash^char.charCodeAt(0),16777619);
+  return session.started+':'+(hash>>>0).toString(36);
 }
 function webValidEvent(entry,validator){
   return entry&&Number.isFinite(entry.at)&&typeof entry.operation==='string'&&(entry.value===null||validator(entry.value));
@@ -927,7 +934,7 @@ function webValidCompleted(session){
   return validSession(session)&&Number.isFinite(session.started)&&Number.isFinite(session.finished)&&session.finished>=session.started;
 }
 function webValidRecords(data){
-  return data&&data.app==='trade-exam-records'&&data.version===1&&data.records&&typeof data.records==='object'&&!Array.isArray(data.records)&&Object.entries(data.records).every(([key,event])=>webValidEvent(event,webValidCompleted)&&(event.value===null||sessionStamp(event.value)===key))&&(data.current===null||webValidEvent(data.current,validSession));
+  return data&&data.app==='trade-exam-records'&&[1,2].includes(data.version)&&data.records&&typeof data.records==='object'&&!Array.isArray(data.records)&&Object.entries(data.records).every(([key,event])=>webValidEvent(event,webValidCompleted)&&(event.value===null||sessionStamp(event.value)===key))&&(data.current===null||webValidEvent(data.current,validSession))&&(data.progress===undefined||data.progress&&typeof data.progress==='object'&&!Array.isArray(data.progress)&&Object.entries(data.progress).every(([key,event])=>webValidEvent(event,s=>validSession(s)&&Number.isFinite(s.started))&&(event.value===null||webAttemptId(event.value)===key)));
 }
 if(!webValidRecords({app:'trade-exam-records',version:1,...webLocal}))webLocal={records:{},current:null};
 function webMergeEvent(first,second){
@@ -938,7 +945,53 @@ function webMergeEvent(first,second){
 function webMergeRecords(remote,local){
   const records={...remote.records};
   for(const [id,event] of Object.entries(local.records))records[id]=webMergeEvent(records[id],event);
-  return {app:'trade-exam-records',version:1,records,current:webMergeEvent(remote.current,local.current)||null};
+  const progress={};
+  const mergeProgress=(id,event)=>{
+    const previous=progress[id];
+    // Submitting an attempt is final; an older device cannot resurrect it.
+    progress[id]=previous?.value===null?previous:event.value===null?event:webMergeEvent(previous,event);
+  };
+  for(const source of [remote,local]){
+    for(const [id,event] of Object.entries(source.progress||{}))mergeProgress(id,event);
+    for(const event of [source.current,...Object.values(source.records)]){
+      if(!event?.value)continue;
+      mergeProgress(webAttemptId(event.value),event.value.finished?{...event,value:null}:event);
+    }
+  }
+  return {app:'trade-exam-records',version:2,records,progress,current:webMergeEvent(remote.current,local.current)||null};
+}
+// Migrate existing single-current data locally before the first network request.
+webLocal=webMergeRecords({records:{},current:null},webLocal);
+if(saved&&!webLocal.progress[webAttemptId(saved)]){
+  const event={...webEvent(saved),at:saved.pausedAt||saved.started};
+  webLocal=webMergeRecords(webLocal,{records:{},current:event});
+}
+function webResumeOptions(){
+  return Object.values(webLocal.progress).filter(e=>e.value&&!e.value.finished).sort((a,b)=>b.at-a.at);
+}
+function webSelectSaved(){
+  const options=webResumeOptions(),same=saved&&options.find(e=>webAttemptId(e.value)===webAttemptId(saved));
+  saved=structuredClone((same||options[0])?.value||webLocal.current?.value||null);
+  webOriginalWrite(KEY,saved);
+}
+function webResumeLabel(){
+  const count=webResumeOptions().length;
+  return count>1?'이어 풀기 · '+count+'개':`이어 풀기 (${Object.keys(saved.answers).length}/${saved.ids.length})`;
+}
+async function webResumeExam(){
+  if(webToken&&!webInitialSynced){await webSync();if(!webInitialSynced){toast('동기화를 완료한 후 이어 풀어 주세요.');return}}
+  const options=webResumeOptions();
+  if(options.length<2){webSelectSaved();if(saved&&!saved.finished)resumeExam();return}
+  const dialog=$('web-resume');
+  dialog.querySelector('.web-resume-list').innerHTML=options.map((event,index)=>{
+    const session=event.value;
+    return `<button type="button" data-resume-attempt="${index}"><strong>${escapeHTML(session.title)}</strong><span>${Object.keys(session.answers).length}/${session.ids.length}문항 · ${session.index+1}번 · ${session.pausedAt!=null?'일시정지':session.deadline?'시간 진행 중':'시간제한 없음'}</span></button>`;
+  }).join('');
+  dialog.querySelectorAll('[data-resume-attempt]').forEach(button=>button.onclick=()=>{
+    saved=structuredClone(options[Number(button.dataset.resumeAttempt)].value);
+    webOriginalWrite(KEY,saved);dialog.close();resumeExam();
+  });
+  dialog.showModal();
 }
 function webSetStatus(message){
   $('web-status').textContent=message;
@@ -972,9 +1025,10 @@ write=function(key,value){
     webSchedule();
   }else if(key===KEY){
     webLocal.current=webEvent(value);
+    webLocal.progress[webAttemptId(value)]=value.finished?{...webLocal.current,value:null}:webLocal.current;
     webOriginalWrite(WEB_RECORDS_KEY,webLocal);
     webSetStatus('답안 저장 대기');
-    webSchedule(value.finished?1200:15000);
+    webSchedule(value.finished?1200:value.pausedAt!=null?0:15000);
   }else if(key===SPECIAL_SYNC){
     webSetStatus('특별문제 저장 대기');
     webSchedule();
@@ -1037,9 +1091,17 @@ async function webRecordSync(){
       webHistorySnapshot=JSON.parse(JSON.stringify(history));
       webOriginalWrite(HIST,history);
       if(screen!=='exam'&&webLocal.current){
-        saved=webLocal.current.value;
-        webOriginalWrite(KEY,saved);
+        webSelectSaved();
+      }else if(screen==='exam'&&state&&!state.finished){
+        const event=webLocal.progress[webAttemptId(state)];
+        if(event?.value&&JSON.stringify(event.value)!==JSON.stringify(state)){
+          state=saved=structuredClone(event.value);webOriginalWrite(KEY,state);renderExam();
+        }else if(event?.value===null){
+          const completed=history.find(s=>webAttemptId(s)===webAttemptId(state));
+          if(completed){state=completed;webSelectSaved();showResults()}
+        }
       }
+      webInitialSynced=true;
       syncMistakes(history);
     }finally{webApplying=false}
     return;
@@ -1052,11 +1114,12 @@ async function webSync(){
   webBusy=true;clearTimeout(webTimer);
   webSetStatus('GitHub 동기화 중…');
   try{
-    await webSpecialSync();
     await webRecordSync();
+    await webSpecialSync();
     if(screen==='home')home();
     webSetStatus('동기화 완료 · '+new Date().toLocaleTimeString('ko-KR'));
   }catch(error){
+    if(screen==='home')home();
     webSetStatus(error.message||'연결 실패 · 변경사항은 브라우저에 보관 중');
   }finally{
     webBusy=false;
@@ -1070,6 +1133,7 @@ function applySpecialIds(ids){
   if(screen==='home')home();
 }
 function webBoot(){
+  $('web-resume-close').onclick=()=>$('web-resume').close();
   $('web-connect').onclick=()=>$('web-auth').showModal();
   $('web-auth-close').onclick=()=>$('web-auth').close();
   $('web-auth-form').onsubmit=event=>{
@@ -1093,6 +1157,10 @@ function webBoot(){
   if(webToken)webSync();
   else webSetStatus('GitHub 연결 후 특별문제·기록 자동 저장');
 }
+// Do not auto-submit an expired local snapshot while fetching a newer paused
+// snapshot from another device. Timer expiry runs again after a successful pull.
+const webOriginalTick=tick;
+tick=function(){if(screen!=='exam')return;if(webToken&&!webInitialSynced){if(state)updateClock();return}webOriginalTick()};
 
 document.addEventListener('keydown',e=>{if(screen!=='exam'||document.querySelector('dialog[open]')||['INPUT','SELECT','TEXTAREA','BUTTON'].includes(document.activeElement.tagName)||e.ctrlKey||e.altKey||e.metaKey)return;if(/^[1-4]$/.test(e.key)){e.preventDefault();choose(+e.key)}else if(e.key==='ArrowRight'){e.preventDefault();jump(state.index+1)}else if(e.key==='ArrowLeft'){e.preventDefault();jump(state.index-1)}else if(e.key.toLowerCase()==='f'){$('flag').click()}});setInterval(tick,500);home();webBoot();
 </script></body></html>
