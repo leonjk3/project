@@ -484,7 +484,6 @@ function syncSubjectChoices(){selectedSubjects=[...document.querySelectorAll('[d
 function syncRandomSubjects(){randomSubjects=[...document.querySelectorAll('[data-random-subject]:checked')].map(el=>+el.dataset.randomSubject);$('random-all').checked=randomSubjects.length===4;$('random-all').indeterminate=randomSubjects.length>0&&randomSubjects.length<4;$('random').disabled=!randomSubjects.length;$('random').textContent='시험시작';}
 /* Presentation groups retain each attempt's original history index. */
 const historyOpenGroups=new Set();
-let historyGroupsInitialized=false;
 function historyGroupOf(session){
   if(session.twoChoices)return {key:'two-choice',label:'오답 2지선다'};
   if(session.mode==='special')return {key:'special',label:'특별문제'};
@@ -504,7 +503,6 @@ function groupedHistoryHTML(){
     groups.get(group.key).entries.push({session,index});
   });
   const ordered=[...groups.values()].sort((a,b)=>(a.round??Infinity)-(b.round??Infinity)||a.label.localeCompare(b.label,'ko'));
-  if(!historyGroupsInitialized){historyOpenGroups.add(ordered[0].key);historyGroupsInitialized=true}
   return ordered.map(group=>{
     const entries=group.entries.sort((a,b)=>a.session.finished-b.session.finished);
     return `<details class="history-group" data-history-group="${group.key}" ${historyOpenGroups.has(group.key)?'open':''}><summary><strong>${group.label}</strong><span class="muted">${entries.length}회 응시</span></summary>${entries.map(({session:h,index:i},attempt)=>{
