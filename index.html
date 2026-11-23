@@ -1269,13 +1269,14 @@ renderExam=function(){
   if(!realisticEnabled||!matchMedia('(min-width:761px)').matches){
     document.body.classList.remove('realistic-exam');classicRenderExam();
     const controls=app.querySelector('.examtop>.row');
-    if(controls&&matchMedia('(min-width:761px)').matches){const button=document.createElement('button');button.id='realistic-toggle';button.className='small';button.textContent='실전 화면';button.onclick=realisticToggle;controls.prepend(button)}
+    if(controls&&matchMedia('(min-width:761px)').matches){const button=document.createElement('button');button.id='realistic-toggle';button.className='small';button.textContent='실전 화면 (R)';button.setAttribute('aria-keyshortcuts','R');button.onclick=realisticToggle;controls.prepend(button)}
     return;
   }
   screen='exam';updateHomeLabel();
   const n=state.ids.length;
-  app.innerHTML=`<section class="real-shell"><div class="real-toolbar"><button id="realistic-toggle">기존 화면</button><div class="real-position"><button id="prev" aria-label="이전 문제">‹</button><strong id="real-position"></strong><button id="next" aria-label="다음 문제">›</button></div><div class="real-timer"><span id="clock-label">남은 시간</span><strong id="clock">--:--</strong></div><button id="submit">시험 종료</button></div><div class="real-layout"><nav class="real-index" aria-label="문항 목록">${state.ids.map((id,i)=>`<button data-real-jump="${i}" aria-label="${i+1}번 문제">${i+1}<span></span></button>`).join('')}</nav><div class="real-scroll" tabindex="0" aria-label="시험 문제"><div class="real-list">${state.ids.map((id,i)=>{const q=byId.get(id);return `<section class="question real-card" data-real-index="${i}"><div class="real-qhead"><strong>${i+1}. 객관식 <span>${SUBJECTS[q.subject]}</span></strong><button data-real-flag="${i}" aria-pressed="${!!state.flags[id]}">다시 풀 문제 ⚑</button></div><div class="paper">${realisticPaper(q)}</div><div class="answerbar"><span>답안 선택</span>${answerChoices(q,state).map(v=>`<button data-real-answer="${v}" aria-label="${i+1}번 문제 ${v}번 답안" aria-pressed="${state.answers[id]===v}"><span class="real-radio">${v}</span><span class="real-option">${escapeHTML(realisticParts(q).options?.[v-1]||`${v}번 보기`)}</span></button>`).join('')}<button data-real-clear="${i}">선택 취소</button></div></section>`}).join('')}</div></div></div><footer class="real-footer"><span id="count"></span><button id="unanswered">미응답 문제</button><button id="flagged">다시 풀 문제</button></footer></section>`;
+  app.innerHTML=`<section class="real-shell"><div class="real-toolbar"><button id="realistic-toggle" aria-keyshortcuts="R">기존 화면 (R)</button><div class="real-position"><button id="prev" aria-label="이전 문제">‹</button><strong id="real-position"></strong><button id="next" aria-label="다음 문제">›</button></div><div class="real-timer"><span id="clock-label">남은 시간</span><strong id="clock">--:--</strong></div>${state.deadline?'<button id="timer-toggle" type="button" aria-pressed="false" aria-keyshortcuts="P" title="P키: 시간 일시정지·재개">일시정지</button>':''}<button id="submit">시험 종료</button></div><div class="real-layout"><nav class="real-index" aria-label="문항 목록">${state.ids.map((id,i)=>`<button data-real-jump="${i}" aria-label="${i+1}번 문제">${i+1}<span></span></button>`).join('')}</nav><div class="real-scroll" tabindex="0" aria-label="시험 문제"><div class="real-list">${state.ids.map((id,i)=>{const q=byId.get(id);return `<section class="question real-card" data-real-index="${i}"><div class="real-qhead"><strong>${i+1}. 객관식 <span>${SUBJECTS[q.subject]}</span></strong><button data-real-flag="${i}" aria-pressed="${!!state.flags[id]}">다시 풀 문제 ⚑</button></div><div class="paper">${realisticPaper(q)}</div><div class="answerbar"><span>답안 선택</span>${answerChoices(q,state).map(v=>`<button data-real-answer="${v}" aria-label="${i+1}번 문제 ${v}번 답안" aria-pressed="${state.answers[id]===v}"><span class="real-radio">${v}</span><span class="real-option">${escapeHTML(realisticParts(q).options?.[v-1]||`${v}번 보기`)}</span></button>`).join('')}<button data-real-clear="${i}">선택 취소</button></div></section>`}).join('')}</div></div></div><footer class="real-footer"><span id="count"></span><button id="unanswered">미응답 문제</button><button id="flagged">다시 풀 문제</button></footer></section>`;
   $('realistic-toggle').onclick=realisticToggle;
+  if($('timer-toggle'))$('timer-toggle').onclick=toggleTimer;
   $('prev').onclick=()=>jump(state.index-1);$('next').onclick=()=>jump(state.index+1);
   $('submit').onclick=()=>confirmAction('답안을 제출할까요?',`${answered()}문항 답변 완료, ${n-answered()}문항 미응답입니다. 제출 후에는 답안을 수정할 수 없습니다.`,()=>finish(false));
   $('unanswered').onclick=()=>jumpMatching(id=>!state.answers[id],'모든 문제에 답했습니다.');
@@ -1289,7 +1290,7 @@ renderExam=function(){
     card.addEventListener('pointerdown',()=>realisticSelect(i));
   });
   const scroller=app.querySelector('.real-scroll');let pending=false;
-  scroller.addEventListener('scroll',()=>{if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;if(!realisticActive()||!scroller.isConnected)return;const boundary=scroller.getBoundingClientRect().top+65;let i=0;for(const card of scroller.querySelectorAll('.real-card')){if(card.getBoundingClientRect().top>boundary)break;i=+card.dataset.realIndex}realisticSelect(i)})},{passive:true});
+  scroller.addEventListener('scroll',()=>{if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;if(!realisticActive()||!scroller.isConnected)return;const boundary=scroller.getBoundingClientRect().top+65;let i=0;for(const card of scroller.querySelectorAll('.real-card')){if(card.getBoundingClientRect().top>boundary)break;i=+card.dataset.realIndex}if(i!==state.index){resumeTimerOnActivity();realisticSelect(i)}})},{passive:true});
   realisticRefresh();realisticScroll();updateClock();
 };
 function realisticExpired(){if(state.deadline&&state.pausedAt==null&&Date.now()>=state.deadline){finish(true);return true}return false}
@@ -1313,7 +1314,14 @@ function realisticRefresh(){
 choose=function(n){if(!realisticActive())return classicChoose(n);resumeTimerOnActivity();if(realisticExpired()||!answerChoices(byId.get(state.ids[state.index]),state).includes(n))return;state.answers[state.ids[state.index]]=n;save();realisticRefresh()};
 jump=function(i){if(!realisticActive())return classicJump(i);if(i<0||i>=state.ids.length)return;resumeTimerOnActivity();if(realisticExpired())return;realisticSelect(i);realisticScroll()};
 // Practice-only hotkeys are intentionally unavailable in this exam view.
-document.addEventListener('keydown',event=>{if(!realisticActive()||event.ctrlKey||event.altKey||event.metaKey||event.target.isContentEditable||['INPUT','SELECT','TEXTAREA'].includes(event.target.tagName))return;if(['p','s','c','v',' '].includes(event.key.toLowerCase())||event.code==='Space'){event.preventDefault();event.stopImmediatePropagation()}},true);
+document.addEventListener('keydown',event=>{if(!realisticActive()||event.ctrlKey||event.altKey||event.metaKey||event.target.isContentEditable||['INPUT','SELECT','TEXTAREA'].includes(event.target.tagName))return;if(['s','c','v',' '].includes(event.key.toLowerCase())||event.code==='Space'){event.preventDefault();event.stopImmediatePropagation()}},true);
+
+// R toggles only the desktop exam view; text input and modifier shortcuts stay native.
+document.addEventListener('keydown',event=>{
+  if(event.code!=='KeyR'||event.repeat||event.ctrlKey||event.altKey||event.metaKey||event.shiftKey||screen!=='exam'||!state||state.finished||!matchMedia('(min-width:761px)').matches||document.querySelector('dialog[open]'))return;
+  if(event.target.isContentEditable||['INPUT','SELECT','TEXTAREA'].includes(event.target.tagName))return;
+  event.preventDefault();realisticToggle();
+});
 
 setInterval(tick,500);home();webBoot();
 </script></body></html>
